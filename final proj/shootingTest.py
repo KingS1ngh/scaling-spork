@@ -4,12 +4,8 @@ from pygame import *
 from random import *
 from math import *
 #MA NAME JEF
-<<<<<<< HEAD
 #random BS
-=======
-
 #gfkdjgkfjdkgjkfdjkf
->>>>>>> origin/master
 screen=display.set_mode((800,600))
 back1=image.load("back1.png").convert()
 back1=transform.scale(back1,(2000,2000))#lolololololololololololololollolololololol
