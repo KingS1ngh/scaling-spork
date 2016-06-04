@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="89e4e60b-c454-4126-8e2c-6d0d146b25e3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/final proj/shootingTest.py" afterPath="$PROJECT_DIR$/final proj/shootingTest.py" />
-    </list>
+    <list default="true" id="89e4e60b-c454-4126-8e2c-6d0d146b25e3" name="Default" comment="" />
     <ignored path="scaling-spork.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
