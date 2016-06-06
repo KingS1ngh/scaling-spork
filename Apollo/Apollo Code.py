@@ -429,7 +429,7 @@ shots=[]
 gunAng=0.0
 power=3.0
 gunHeat=0
-guy={'':image.load('Pictures/'+weapon+' '+Class+'.png'),'L':image.load('Pictures/'+weapon+' '+Class+' '+'Left.png'),'R':image.load('Pictures/'+weapon+' '+Class+' '+'Right.png'),'D':image.load('Pictures/'+weapon+' '+Class+' '+'Down.png')}
+guy= image.load('Pictures/'+weapon+' '+Class+'.png')
 badGuys=[[0,0,0],[100,400,0],[300,33,0],[500,32,0],[800,600,0],[200,200,0]]
 keys=key.get_pressed()
 while page!='exit':
@@ -452,9 +452,6 @@ while page!='exit':
     if not running:
         page='exit'
 quit()
-
-
-
 
 
 
