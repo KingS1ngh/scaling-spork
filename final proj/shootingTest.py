@@ -4,7 +4,7 @@ from pygame import *
 from random import *
 from math import *
 
-screen = display.set_mode((1200, 800))
+screen = display.set_mode((1250, 768), FULLSCREEN)
 back1 = image.load("back1.png").convert()
 back1 = transform.scale(back1, (2000, 2000))
 back2 = image.load("Back2.png").convert()
@@ -26,6 +26,10 @@ MarineHealth = 70
 TankHealth = 100
 ScoutHealth = 30
 myClock = time.Clock()
+
+for i in range(1, 17):
+    # bombPics+=image.load("explosion/explosion"+str(i)+".png")
+    print(i)
 
 
 def distance(x1, y1, x2, y2):
@@ -57,7 +61,7 @@ def turn():
 
 
 def guyRect(x, y):
-    grect = Rect(x, y, x + 30, y + 30)
+    grect = Rect(x, y, 30, 30)
     return grect
 
 
@@ -119,17 +123,26 @@ def checkKill(x, y):
     return False
 
 
-def checkHit(rect, x, y):
+def checkHit(rect):
+    global bombs
     global MarineHealth
-    if rect.collidepoint(x, y):
-        return True
-    return False
+    global badGuys
+    for bguy in badGuys:
+        if rect.collidepoint(bguy[0], bguy[1]):
+            MarineHealth -= 10
+            badGuys.remove(bguy)
+            bombs.append([bguy[0], bguy[1]])
 
 
 def checkWinLevel(badGuys):
     if len(badGuys) == 0:
         return True
     return False
+
+
+def checkLoseLevel(health):
+    if health <= 0:
+        return True
 
 
 def checkUpgrade(Wcrates, guyx, guyy):
@@ -147,12 +160,11 @@ def checkUpgrade(Wcrates, guyx, guyy):
 
 
 def goodHealthMeter(health):
-    healthRect = Rect(10, 10, 10 + health, 20)
+    healthRect = Rect(10, 10, 10 + (health * 2), 20)
     return healthRect
 
 
 def drawScene(screen):
-    global MarineHealth
     screen.blit(back1, (0, 0))
     pic = transform.scale(guy, (50, 50))
     turn()
@@ -180,17 +192,21 @@ def drawScene(screen):
         moveBadGuys(bguy, guyx, guyy)
         alien1 = transform.rotate(badguy1, bguy[2])
         screen.blit(alien1, bguy[:2])
-        grect = guyRect(guyx, guyy)
-        gHit = checkHit(grect, bguy[X], bguy[Y])
-        if gHit:
-            MarineHealth -= 1
+
+    grect = guyRect(guyx, guyy)
+    draw.rect(screen, (0, 0, 0), (grect), 1)
+    checkHit(grect)
     healthRect = goodHealthMeter(MarineHealth)
-    draw.rect(screen, (0, 255, 0), healthRect)
+    draw.rect(screen, (0, 255, 0), (healthRect))
+
     win = checkWinLevel(badGuys)
     if win:
         screen.fill((211, 211, 211))
         screen.blit((transform.scale((image.load("stuff/victory.png")), (1000, 600))), (-100, 0))
 
+    lose = checkLoseLevel(MarineHealth)
+    if lose:
+        screen.fill((0, 0, 0))
     display.flip()
 
 
@@ -206,12 +222,14 @@ badGuys = [[randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 6
            [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0]]
 Wcrates = [[200, 300], [500, 70], [400, 400]]
 badguy1 = transform.scale(badguy1, (60, 60))
-
+bombs = []
 while running:
     for evnt in event.get():
         if evnt.type == QUIT:
             running = False
     keys = key.get_pressed()
+    if keys[27]:
+        break
     mb = mouse.get_pressed()
     if mb[0] == 1 and gunHeat <= 0:
         gunHeat = 10
