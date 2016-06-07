@@ -33,7 +33,7 @@ ScoutHealth = 30
 myClock = time.Clock()
 
 for i in range(1, 17):
-    bombPics.append(image.load("explosion/explosion"+str(i)+".png"))
+    bombPics+=[(image.load("explosion/explosion"+str(i)+".png"))]
     print(bombPics)
 
 
@@ -126,7 +126,6 @@ def checkKill(x, y):
             return True
     return False
 
-
 def checkHit(rect):
     global bombs
     global MarineHealth
@@ -172,6 +171,7 @@ def goodHealthMeter(health):
 
 
 def drawScene(screen):
+    FRAME=0
     screen.blit(back1, (0, 0))
     pic = transform.scale(guy, (50, 50))
     turn()
@@ -206,6 +206,9 @@ def drawScene(screen):
     checkHit(grect)
     healthRect = goodHealthMeter(MarineHealth)
     draw.rect(screen, (0, 255, 0), (healthRect))
+
+    for bomb in bombs:
+        screen.blit(bombPics[bomb[FRAME]],(bomb[0],bomb[1]))
 
     win = checkWinLevel(badGuys)
     if win:
