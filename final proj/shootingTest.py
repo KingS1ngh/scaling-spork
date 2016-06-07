@@ -4,7 +4,7 @@ from pygame import *
 from random import *
 from math import *
 
-screen = display.set_mode((1024, 768), FULLSCREEN)
+screen = display.set_mode((1350, 768), FULLSCREEN)
 back1 = image.load("back1.png").convert()
 back1 = transform.scale(back1, (2000, 2000))
 back2 = image.load("Back2.png").convert()
@@ -34,7 +34,6 @@ myClock = time.Clock()
 
 for i in range(1, 17):
     bombPics+=[(image.load("explosion/explosion"+str(i)+".png"))]
-    print(bombPics)
 
 
 def distance(x1, y1, x2, y2):
@@ -208,12 +207,15 @@ def drawScene(screen):
     draw.rect(screen, (0, 255, 0), (healthRect))
 
     for bomb in bombs:
-        screen.blit(bombPics[bomb[FRAME]],(bomb[0],bomb[1]))
+        for pic in bombPics[:]:
+            screen.blit(pic,(bomb[0],bomb[1]))
+            bombPics.remove(pic)
+            display.flip()
 
     win = checkWinLevel(badGuys)
-    if win:
-        screen.fill((211, 211, 211))
-        screen.blit((transform.scale((image.load("stuff/victory.png")), (1000, 600))), (10, 0))
+#    if win:
+#        screen.fill((211, 211, 211))
+#        screen.blit((transform.scale((image.load("stuff/victory.png")), (1000, 600))), (10, 0))
 
     lose = checkLoseLevel(MarineHealth)
     if lose:
@@ -226,7 +228,7 @@ shots = []
 gunAng = 0.0
 power = 10
 gunHeat = 0
-BADSPEED = 1
+BADSPEED = 2
 badGuys = [[randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
            [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
            [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
