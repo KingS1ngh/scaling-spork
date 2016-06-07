@@ -4,11 +4,12 @@ from pygame import *
 from random import *
 from math import *
 
-screen = display.set_mode((1350, 768), FULLSCREEN)
+screen = display.set_mode((1024, 768), FULLSCREEN)
 back1 = image.load("back1.png").convert()
 back1 = transform.scale(back1, (2000, 2000))
 back2 = image.load("Back2.png").convert()
 back2 = transform.scale(back2, (800, 600))
+
 guyx = 100
 guyy = 100
 SPACE = 32
@@ -19,17 +20,21 @@ VY = 3
 C = 4
 angle = 0
 crateNum = 0
+
 guy = image.load("Marine/MMarine.png")
 badguy1 = image.load("alien1/alien1.png")
 crat = image.load("stuff/Weapon Crate.png")
+bombPics=[]
+
 MarineHealth = 70
 TankHealth = 100
 ScoutHealth = 30
+
 myClock = time.Clock()
 
 for i in range(1, 17):
-    # bombPics+=image.load("explosion/explosion"+str(i)+".png")
-    print(i)
+    bombPics.append(image.load("explosion/explosion"+str(i)+".png"))
+    print(bombPics)
 
 
 def distance(x1, y1, x2, y2):
@@ -49,9 +54,9 @@ def moveGuy(x, y):
     if keys[ord("s")]:
         guyy += 5
     if guyx < 0: guyx = 0
-    if guyx > 800 - 35: guyx = 800 - 35
+    if guyx > 1350 - 35: guyx = 1350 - 35
     if guyy < 0: guyy = 0
-    if guyy > 600 - 35: guyy = 600 - 35
+    if guyy > 768 - 35: guyy = 768 - 35
 
 
 def turn():
@@ -61,12 +66,11 @@ def turn():
 
 
 def guyRect(x, y):
-    grect = Rect(x, y, 30, 30)
+    grect = Rect(x, y, 35, 35)
     return grect
 
 
 def vectToXY(mag, ang):
-    global badGuys
     rang = radians(ang)
     x = cos(rang) * mag
     y = sin(rang) * mag
@@ -110,7 +114,7 @@ def moveShots(shots):
 
 
 def enemyRect(bguy):
-    eRect = Rect(bguy[0], bguy[1], 40, 40)
+    eRect = Rect(bguy[0] + 35, bguy[1] + 35, 30, 30)
     return eRect
 
 
@@ -128,7 +132,7 @@ def checkHit(rect):
     global MarineHealth
     global badGuys
     for bguy in badGuys:
-        if rect.collidepoint(bguy[0], bguy[1]):
+        if rect.collidepoint(bguy[0] + 35, bguy[1] + 35):
             MarineHealth -= 10
             badGuys.remove(bguy)
             bombs.append([bguy[0], bguy[1]])
@@ -149,11 +153,14 @@ def checkUpgrade(Wcrates, guyx, guyy):
     global guy
     global crateNum
     for crate in Wcrates:
+
         crateRect = Rect(crate[0], crate[1], 40, 40)
         draw.rect(screen, (0, 0, 0), (crateRect), 1)
+
         if crateRect.collidepoint(guyx + 15, guyy + 15):
             Wcrates.remove(crate)
             crateNum += 1
+
     if crateNum == 1: guy = image.load("Marine/Plasma Marine.png")
     if crateNum == 2: guy = image.load("Marine/Rifle Marine.png")
     if crateNum == 3: guy = image.load("Marine/Sniper Marine.png")
@@ -192,6 +199,7 @@ def drawScene(screen):
         moveBadGuys(bguy, guyx, guyy)
         alien1 = transform.rotate(badguy1, bguy[2])
         screen.blit(alien1, bguy[:2])
+        eRect = enemyRect(bguy)
 
     grect = guyRect(guyx, guyy)
     draw.rect(screen, (0, 0, 0), (grect), 1)
@@ -202,7 +210,7 @@ def drawScene(screen):
     win = checkWinLevel(badGuys)
     if win:
         screen.fill((211, 211, 211))
-        screen.blit((transform.scale((image.load("stuff/victory.png")), (1000, 600))), (-100, 0))
+        screen.blit((transform.scale((image.load("stuff/victory.png")), (1000, 600))), (10, 0))
 
     lose = checkLoseLevel(MarineHealth)
     if lose:
@@ -223,17 +231,21 @@ badGuys = [[randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 6
 Wcrates = [[200, 300], [500, 70], [400, 400]]
 badguy1 = transform.scale(badguy1, (60, 60))
 bombs = []
+
 while running:
     for evnt in event.get():
         if evnt.type == QUIT:
             running = False
+
     keys = key.get_pressed()
     if keys[27]:
         break
+
     mb = mouse.get_pressed()
     if mb[0] == 1 and gunHeat <= 0:
         gunHeat = 10
         shots.append(addShot(-angle - 90, power))
+
     gunHeat -= 1
     moveShots(shots)
     moveGuy(guyx, guyy)
