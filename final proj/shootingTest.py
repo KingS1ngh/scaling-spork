@@ -4,7 +4,7 @@ from pygame import *
 from random import *
 from math import *
 
-screen = display.set_mode((1250, 768), FULLSCREEN)
+screen = display.set_mode((1350, 768), FULLSCREEN)
 back1 = image.load("back1.png").convert()
 back1 = transform.scale(back1, (2000, 2000))
 back2 = image.load("Back2.png").convert()
