@@ -150,6 +150,7 @@ def checkLoseLevel(health):
 def checkUpgrade(Wcrates, guyx, guyy):
     global guy
     global crateNum
+    global bullet
     for crate in Wcrates:
 
         crateRect = Rect(crate[0], crate[1], 40, 40)
@@ -159,9 +160,14 @@ def checkUpgrade(Wcrates, guyx, guyy):
             Wcrates.remove(crate)
             crateNum += 1
 
-    if crateNum == 1: guy = image.load("Marine/Plasma Marine.png")
-    if crateNum == 2: guy = image.load("Marine/Rifle Marine.png")
+    if crateNum == 1:
+        bullet = transform.scale((image.load("stuff/Plasma Flash.png")), (30, 30))
+        guy = image.load("Marine/Plasma Marine.png")
+    if crateNum == 2:
+        bullet = transform.scale((image.load("stuff/shot.png")), (12, 12))
+        guy = image.load("Marine/Rifle Marine.png")
     if crateNum == 3: guy = image.load("Marine/Sniper Marine.png")
+
 
 
 def goodHealthMeter(health):
@@ -178,8 +184,6 @@ def drawScene(screen):
     screen.blit(pic, (guyx - 17, guyy - 17))
     shoot1 = image.load("stuff/shot.png")
     shoot1 = transform.scale(shoot1, (10, 10))
-    shoot2 = image.load("stuff/redbullet.png").convert()
-    shoot2 = transform.scale(shoot2, (7, 7))
 
     for crate in Wcrates:
         weaponcrate = transform.scale(crat, (40, 40))
@@ -187,7 +191,7 @@ def drawScene(screen):
         checkUpgrade(Wcrates, guyx, guyy)
 
     for shot in shots[:]:
-        screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
+        screen.blit(bullet, (int(shot[X]), int(shot[Y])))
         # draw.circle(screen,(30,30,255),(int(shot[X]),int(shot[Y])),3)
         used = checkKill(shot[X], shot[Y])
 
@@ -201,7 +205,6 @@ def drawScene(screen):
         eRect = enemyRect(bguy)
 
     grect = guyRect(guyx, guyy)
-    draw.rect(screen, (0, 0, 0), (grect), 1)
     checkHit(grect)
     healthRect = goodHealthMeter(MarineHealth)
     draw.rect(screen, (0, 255, 0), (healthRect))
@@ -224,6 +227,8 @@ def drawScene(screen):
 
 
 running = True
+bullet = image.load("stuff/redbullet.png").convert()
+bullet = transform.scale(bullet, (7, 7))
 shots = []
 gunAng = 0.0
 power = 10
@@ -233,7 +238,7 @@ badGuys = [[randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 6
            [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
            [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
            [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0]]
-Wcrates = [[200, 300], [500, 70], [400, 400]]
+Wcrates = [[200, 300], [500, 700], [1200, 500]]
 badguy1 = transform.scale(badguy1, (60, 60))
 bombs = []
 
