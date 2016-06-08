@@ -2,224 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8d545d6b-8dda-4789-ba80-24e0954558b3" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien 1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien 2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien 3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien(1) Ship 1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien(1) Ship 2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien(1) Ship 3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien(2) Ship 1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien(2) Ship 2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien(2) Ship 3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien(3) Ship 1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Alien(3) Ship 2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Apollo Code.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Armory Not Pressed.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Armory Pressed.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Boss Alien.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Building 1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Building 2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Campaign Not Pressed.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Campaign Pressed.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Cannon Scout.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Class Selection Background.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Crate 1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Crate 2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Crate 3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Crate 4.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Earth Ship.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Elder Marine.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Endless Not Pressed.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Endless Pressed.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Grenade.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Infected Building 1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Infected Building 2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Infected Building 3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Item Crate.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Junk 1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Junk 2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Junk 3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Junk 4.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Junk 5.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Junk 6.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Level One Background.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Level Two Background.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Load Game Button.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Machine Marine.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Marine Name.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Marine Stats.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Med Crate.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Melee Tank.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Minigun Tank.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Muzzle Flash.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/New Game Button.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Overshield.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Pistol Tank.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Plasma Flash.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Plasma Marine.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Rifle Marine.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Rifle Scout.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Scizor Ring.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Scout Name.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Scout Stats.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Shotgun Tank.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Sniper Marine.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Sniper Scout.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Start Button.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Tank Name.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Tank Stats.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Title Screen.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Weapon Crate.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/pick your class.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Apollo/Pictures/shoot.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Class Selection Background.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Grenade.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Muzzle Flash.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Overshield.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Plasma Flash.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Scizor Ring.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Title Screen.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Alien #2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Alien #3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Alien(1) Ship #1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Alien(1) Ship #2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Alien(1) Ship #3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Alien(2) Ship #1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Alien(2) Ship #2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Alien(2) Ship #3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Alien(3) Ship #1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Alien(3) Ship #2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Back1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Back2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Boss Alien.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Building #1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Building #2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Crate #1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Crate #2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Crate #3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Crate #4.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Earth Ship.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Infected Building #1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Infected Building #2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Infected Building #3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Item Crate.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Junk #1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Junk #2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Junk #3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Junk #4.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Junk #5.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Junk #6.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Marine Class.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Marine/MMarine.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Marine/Plasma Marine.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Marine/Rifle Marine.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Marine/Sniper Marine.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Med Crate.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Proposal.docx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Scout Class.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Scout/CScout.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Scout/Rilfe Scout.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Scout/Sniper Scout.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Tank/Elder Tank.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Tank/MTank.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Tank/Minigun Tank.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Tank/Rifle Tank.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Tank/Shotgun Tank.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/Terminator Class.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/alien1/alien1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/alien1/alien1D.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/alien1/alien1L.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/alien1/alien1R.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/animationTest.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/cleanversion.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/rotate.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/Cannonball.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/Weapon Crate.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/cannon.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/cannon1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/cannon2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/cannon3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/shoot.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/shot1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/shot2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/shot3.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final proj/stuff/slash.png" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien 1.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien 1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien 2.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien 2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien 3.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien 3.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien(1) Ship 1.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien(1) Ship 1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien(1) Ship 2.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien(1) Ship 2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien(1) Ship 3.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien(1) Ship 3.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien(2) Ship 1.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien(2) Ship 1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien(2) Ship 2.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien(2) Ship 2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien(2) Ship 3.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien(2) Ship 3.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien(3) Ship 1.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien(3) Ship 1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Pictures/Alien(3) Ship 2.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Alien(3) Ship 2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Save 1.txt" afterPath="$PROJECT_DIR$/final proj/Save 1.txt" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Save 2.txt" afterPath="$PROJECT_DIR$/final proj/Save 2.txt" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Apollo/Save 3.txt" afterPath="$PROJECT_DIR$/final proj/Save 3.txt" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Armory Not Pressed.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Armory Not Pressed.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Armory Pressed.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Armory Pressed.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Boss Alien.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Boss Alien.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Building 1.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Building 1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Building 2.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Building 2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Campaign Not Pressed.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Campaign Not Pressed.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Campaign Pressed.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Campaign Pressed.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Cannon Scout.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Cannon Scout.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Crate 1.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Crate 1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Crate 2.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Crate 2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Crate 3.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Crate 3.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Crate 4.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Crate 4.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Earth Ship.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Earth Ship.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Elder Marine.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Elder Marine.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Endless Not Pressed.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Endless Not Pressed.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Endless Pressed.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Endless Pressed.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Infected Building 1.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Infected Building 1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Infected Building 2.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Infected Building 2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Infected Building 3.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Infected Building 3.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Item Crate.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Item Crate.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Junk 1.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Junk 1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Junk 2.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Junk 2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Junk 3.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Junk 3.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Junk 4.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Junk 4.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Junk 5.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Junk 5.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Junk 6.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Junk 6.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Level One Background.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Level One Background.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Level Two Background.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Level Two Background.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Load Game Button.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Load Game Button.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Machine Marine.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Machine Marine.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Marine Name.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Marine Name.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Marine Stats.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Marine Stats.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Med Crate.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Med Crate.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Melee Tank.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Melee Tank.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Minigun Tank.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Minigun Tank.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/New Game Button.png" afterPath="$PROJECT_DIR$/final proj/Pictures/New Game Button.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Pistol Tank.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Pistol Tank.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Plasma Marine.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Plasma Marine.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Rifle Marine.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Rifle Marine.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Rifle Scout.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Rifle Scout.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Scout Name.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Scout Name.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Scout Stats.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Scout Stats.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Shotgun Tank.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Shotgun Tank.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Sniper Marine.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Sniper Marine.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Sniper Scout.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Sniper Scout.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Start Button.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Start Button.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Tank Name.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Tank Name.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Tank Stats.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Tank Stats.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Weapon Crate.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Weapon Crate.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/Class Selection Background.jpg" afterPath="$PROJECT_DIR$/final proj/Pictures/Class Selection Background.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/Overshield.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Overshield.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/Scizor Ring.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Scizor Ring.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/Title Screen.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Title Screen.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/stuff/Grenade.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Grenade.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/stuff/Muzzle Flash.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Muzzle Flash.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/stuff/Plasma Flash.png" afterPath="$PROJECT_DIR$/final proj/Pictures/Plasma Flash.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/stuff/Victory.jpg" afterPath="$PROJECT_DIR$/final proj/Pictures/Victory.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/stuff/redbullet.png" afterPath="$PROJECT_DIR$/final proj/Pictures/redbullet.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/stuff/shot.png" afterPath="$PROJECT_DIR$/final proj/Pictures/shot.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/final proj/stuff/victory.png" afterPath="$PROJECT_DIR$/final proj/Pictures/victory.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pick your class.png" afterPath="$PROJECT_DIR$/final proj/Pictures/pick your class.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/shoot.png" afterPath="$PROJECT_DIR$/final proj/Pictures/shoot.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/final proj/shootingTest.py" afterPath="$PROJECT_DIR$/final proj/shootingTest.py" />
     </list>
@@ -245,8 +27,8 @@
       <file leaf-file-name="shootingTest.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/final proj/shootingTest.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1155">
-              <caret line="546" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="546" selection-end-column="0" />
+            <state relative-caret-position="805">
+              <caret line="346" column="18" selection-start-line="346" selection-start-column="18" selection-end-line="346" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -297,7 +79,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -333,6 +114,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -537,18 +319,18 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32930756" sideWeight="0.50185186" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3252818" sideWeight="0.49814814" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3252818" sideWeight="0.49814814" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -586,6 +368,14 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/final proj/shootingTest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/final proj/shootingTest.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -782,8 +572,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/final proj/shootingTest.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1155">
-          <caret line="546" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="546" selection-end-column="0" />
+        <state relative-caret-position="805">
+          <caret line="346" column="18" selection-start-line="346" selection-start-column="18" selection-end-line="346" selection-end-column="18" />
           <folding />
         </state>
       </provider>

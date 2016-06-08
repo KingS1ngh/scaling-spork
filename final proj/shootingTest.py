@@ -2,19 +2,10 @@ from pygame import *
 from random import *
 from math import *
 
-<<<<<<< HEAD
-screen = display.set_mode((1024, 768), FULLSCREEN)
+screen = display.set_mode((1024, 768))
 myClock = time.Clock()
 running = True
 pos = ''
-=======
-screen = display.set_mode((1350, 768), FULLSCREEN)
-back1 = image.load("back1.png").convert()
-back1 = transform.scale(back1, (2000, 2000))
-back2 = image.load("Back2.png").convert()
-back2 = transform.scale(back2, (800, 600))
-
->>>>>>> origin/master
 guyx = 100
 guyy = 100
 SPACE = 32
@@ -31,7 +22,6 @@ TankHealth = 100
 ScoutHealth = 30
 yellow = 255, 255, 0
 red = 255, 0, 0
-page = 'title'
 mx, my = mouse.get_pos()
 mb = mouse.get_pressed()
 Class = 'Scout'
@@ -103,7 +93,8 @@ badguy1 = transform.scale(badguy1, (60, 60))
 crat = image.load("Pictures/Crate 1.png")
 
 for i in range(1, 17):
-    bombPics+=[(image.load("explosion/explosion"+str(i)+".png"))]
+    bombPics.append(image.load("explosion/explosion"+str(i)+".png"))
+    print(bombPics)
 
 
 def distance(x1, y1, x2, y2):
@@ -195,6 +186,7 @@ def checkKill(x, y):
             return True
     return False
 
+
 def checkHit(rect):
     global bombs
     global MarineHealth
@@ -220,7 +212,6 @@ def checkLoseLevel(health):
 def checkUpgrade(Wcrates, guyx, guyy):
     global guy
     global crateNum
-    global bullet
     for crate in Wcrates:
 
         crateRect = Rect(crate[0], crate[1], 40, 40)
@@ -230,20 +221,9 @@ def checkUpgrade(Wcrates, guyx, guyy):
             Wcrates.remove(crate)
             crateNum += 1
 
-<<<<<<< HEAD
     if crateNum == 1: guy = image.load("Pictures/Plasma Marine.png")
     if crateNum == 2: guy = image.load("Pictures/Rifle Marine.png")
     if crateNum == 3: guy = image.load("Pictures/Sniper Marine.png")
-=======
-    if crateNum == 1:
-        bullet = transform.scale((image.load("stuff/Plasma Flash.png")), (30, 30))
-        guy = image.load("Marine/Plasma Marine.png")
-    if crateNum == 2:
-        bullet = transform.scale((image.load("stuff/shot.png")), (12, 12))
-        guy = image.load("Marine/Rifle Marine.png")
-    if crateNum == 3: guy = image.load("Marine/Sniper Marine.png")
->>>>>>> origin/master
-
 
 
 def goodHealthMeter(health):
@@ -251,7 +231,6 @@ def goodHealthMeter(health):
     return healthRect
 
 
-<<<<<<< HEAD
 def title():
     global running
     startRect = Rect(422, 525, 200, 75)
@@ -339,6 +318,8 @@ def menu():
     menuRunning = True
     buttons = [Rect(305, 375, 190, 55), Rect(320, 450, 160, 45), Rect(320, 515, 160, 50)]
     screens = ['classSelect', 'endless', 'armory']
+    mx, my = mouse.get_pos()
+    mb = mouse.get_pressed()
 
     while running:
         for evnt in event.get():
@@ -544,6 +525,7 @@ def room_1():
     return 'title'
 
 
+page = 'title'
 while page != 'exit':
     if page == 'title':
         page = title()
@@ -563,92 +545,4 @@ while page != 'exit':
         page = room_1()
     if not running:
         page = 'exit'
-=======
-def drawScene(screen):
-    FRAME=0
-    screen.blit(back1, (0, 0))
-    pic = transform.scale(guy, (50, 50))
-    turn()
-    pic = transform.rotate(pic, angle)
-    screen.blit(pic, (guyx - 17, guyy - 17))
-    shoot1 = image.load("stuff/shot.png")
-    shoot1 = transform.scale(shoot1, (10, 10))
-
-    for crate in Wcrates:
-        weaponcrate = transform.scale(crat, (40, 40))
-        screen.blit(weaponcrate, (crate[0], crate[1]))
-        checkUpgrade(Wcrates, guyx, guyy)
-
-    for shot in shots[:]:
-        screen.blit(bullet, (int(shot[X]), int(shot[Y])))
-        # draw.circle(screen,(30,30,255),(int(shot[X]),int(shot[Y])),3)
-        used = checkKill(shot[X], shot[Y])
-
-        if used:
-            shots.remove(shot)
-
-    for bguy in badGuys:
-        moveBadGuys(bguy, guyx, guyy)
-        alien1 = transform.rotate(badguy1, bguy[2])
-        screen.blit(alien1, bguy[:2])
-        eRect = enemyRect(bguy)
-
-    grect = guyRect(guyx, guyy)
-    checkHit(grect)
-    healthRect = goodHealthMeter(MarineHealth)
-    draw.rect(screen, (0, 255, 0), (healthRect))
-
-    for bomb in bombs:
-        for pic in bombPics[:]:
-            screen.blit(pic,(bomb[0],bomb[1]))
-            bombPics.remove(pic)
-            display.flip()
-
-    win = checkWinLevel(badGuys)
-#    if win:
-#        screen.fill((211, 211, 211))
-#        screen.blit((transform.scale((image.load("stuff/victory.png")), (1000, 600))), (10, 0))
-
-    lose = checkLoseLevel(MarineHealth)
-    if lose:
-        screen.fill((0, 0, 0))
-    display.flip()
-
-
-running = True
-bullet = image.load("stuff/redbullet.png").convert()
-bullet = transform.scale(bullet, (7, 7))
-shots = []
-gunAng = 0.0
-power = 10
-gunHeat = 0
-BADSPEED = 2
-badGuys = [[randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
-           [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
-           [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
-           [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0]]
-Wcrates = [[200, 300], [500, 700], [1200, 500]]
-badguy1 = transform.scale(badguy1, (60, 60))
-bombs = []
-
-while running:
-    for evnt in event.get():
-        if evnt.type == QUIT:
-            running = False
-
-    keys = key.get_pressed()
-    if keys[27]:
-        break
-
-    mb = mouse.get_pressed()
-    if mb[0] == 1 and gunHeat <= 0:
-        gunHeat = 10
-        shots.append(addShot(-angle - 90, power))
-
-    gunHeat -= 1
-    moveShots(shots)
-    moveGuy(guyx, guyy)
-    drawScene(screen)
-    myClock.tick(60)
->>>>>>> origin/master
 quit()
