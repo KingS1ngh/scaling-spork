@@ -526,7 +526,7 @@ def room_1():
         myClock.tick(60)
         display.flip()
     return 'title'
-
+#suck tha nigga dick fo free
 
 page = 'classSelect'
 while page != 'exit':
