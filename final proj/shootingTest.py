@@ -1,7 +1,7 @@
 from pygame import *
 from random import *
 from math import *
-
+#nigga da fuck is with this shit
 screen = display.set_mode((1024, 768))
 myClock = time.Clock()
 running = True
