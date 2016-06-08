@@ -94,7 +94,6 @@ crat = image.load("Pictures/Crate 1.png")
 
 for i in range(1, 17):
     bombPics.append(image.load("explosion/explosion"+str(i)+".png"))
-    print(bombPics)
 
 
 def distance(x1, y1, x2, y2):
@@ -358,21 +357,21 @@ def classSelect():
             if evnt.type == KEYDOWN:
                 if evnt.key == K_ESCAPE:
                     classSelectRunning = False
-        scoutRect = Rect(88, 290, 75, 75)
-        marineRect = Rect(362, 290, 75, 75)
-        tankRect = Rect(638, 290, 75, 75)
-        startRect = Rect(300, 475, 200, 75)
+        scoutRect = Rect(173, 490, 75, 75)
+        marineRect = Rect(470, 490, 75, 75)
+        tankRect = Rect(787, 490, 75, 75)
+        startRect = Rect(285, 675, 200, 75)
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
 
         screen.blit(classBack, (0, 0))
-        screen.blit(rScout, (100, 300))
-        screen.blit(rMarine, (375, 300))
-        screen.blit(pTank, (650, 300))
-        screen.blit(classTitle, (210, 25))
-        screen.blit(scoutLable, (50, 375))
-        screen.blit(marineLable, (325, 375))
-        screen.blit(tankLable, (625, 375))
+        screen.blit(rScout, (185, 500))
+        screen.blit(rMarine, (483, 500))
+        screen.blit(pTank, (800, 500))
+        screen.blit(classTitle, (285, 225))
+        screen.blit(scoutLable, (285, 575))
+        screen.blit(marineLable, (560, 575))
+        screen.blit(tankLable, (860, 575))
         screenBuff = screen.copy()
         if scoutRect.collidepoint(mx, my) and mb[0] == 1:
             Class = 'Scout'
@@ -380,8 +379,8 @@ def classSelect():
         if Class == 'Scout':
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, scoutRect, 2)
-            screen.blit(start, (300, 475))
-            screen.blit(scoutInfo, (250, 115))
+            screen.blit(start, (285, 675))
+            screen.blit(scoutInfo, (485, 315))
             screenBuff = screen.copy()
         if Class != 'Scout':
             screen.blit(screenBuff, (0, 0))
@@ -392,8 +391,8 @@ def classSelect():
         if Class == 'Marine':
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, marineRect, 2)
-            screen.blit(start, (300, 475))
-            screen.blit(marineInfo, (250, 115))
+            screen.blit(start, (285, 675))
+            screen.blit(marineInfo, (485, 315))
             screenBuff = screen.copy()
         if Class != 'Marine':
             screen.blit(screenBuff, (0, 0))
@@ -404,8 +403,8 @@ def classSelect():
         if Class == 'Tank':
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, tankRect, 2)
-            screen.blit(start, (300, 475))
-            screen.blit(tankInfo, (250, 115))
+            screen.blit(start, (285, 675))
+            screen.blit(tankInfo, (485, 315))
             screenBuff = screen.copy()
         if Class != 'Tank':
             screen.blit(screenBuff, (0, 0))
@@ -525,7 +524,7 @@ def room_1():
     return 'title'
 
 
-page = 'title'
+page = 'classSelect'
 while page != 'exit':
     if page == 'title':
         page = title()
