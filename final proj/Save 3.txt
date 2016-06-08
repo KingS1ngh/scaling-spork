@@ -1,0 +1,4 @@
+Class Tank
+Weapon Pistol
+Health 7
+Room 1
