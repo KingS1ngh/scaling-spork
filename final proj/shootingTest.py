@@ -3,7 +3,7 @@ from random import *
 from math import *
 import glob
 
-screen = display.set_mode((1024, 768))
+screen = display.set_mode((1024, 700))
 myClock = time.Clock()
 running = True
 pos = ''
@@ -29,7 +29,7 @@ Class = 'Scout'
 weapon = 'Rifle'
 shots = []
 gunAng = 0.0
-power = 3.0
+power = 5.0
 gunHeat = 0
 guy = image.load('Pictures/'+weapon+' '+Class+'.png')
 keys = key.get_pressed()
@@ -516,12 +516,12 @@ def room_1():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 10
+            gunHeat = 15
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene()
+        drawScene(badGuys)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
