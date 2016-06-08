@@ -1,7 +1,8 @@
 from pygame import *
 from random import *
 from math import *
-#nigga da fuck is with this shit
+import glob
+
 screen = display.set_mode((1024, 768))
 myClock = time.Clock()
 running = True
@@ -228,6 +229,52 @@ def checkUpgrade(Wcrates, guyx, guyy):
 def goodHealthMeter(health):
     healthRect = Rect(10, 10, 10+(health*2), 20)
     return healthRect
+
+def drawScene(badGuys):
+    screen.blit(back1, (0, 0))
+    pic = transform.scale(guy, (50, 50))
+    turn()
+    pic = transform.rotate(pic, angle)
+    screen.blit(pic, (guyx - 17, guyy - 17))
+    shoot1 = image.load("Pictures/shot.png")
+    shoot1 = transform.scale(shoot1, (10, 10))
+    shoot2 = image.load("Pictures/redbullet.png").convert()
+    shoot2 = transform.scale(shoot2, (7, 7))
+
+    for crate in Wcrates:
+        weaponcrate = transform.scale(crat, (40, 40))
+        screen.blit(weaponcrate, (crate[0], crate[1]))
+        checkUpgrade(Wcrates, guyx, guyy)
+
+    for shot in shots[:]:
+        screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
+        # draw.circle(screen,(30,30,255),(int(shot[X]),int(shot[Y])),3)
+        used = checkKill(shot[X], shot[Y])
+
+        if used:
+            shots.remove(shot)
+
+    for bguy in badGuys:
+        moveBadGuys(bguy, guyx, guyy)
+        alien1 = transform.rotate(badguy1, bguy[2])
+        screen.blit(alien1, bguy[:2])
+        eRect = enemyRect(bguy)
+
+    grect = guyRect(guyx, guyy)
+    draw.rect(screen, (0, 0, 0), (grect), 1)
+    checkHit(grect)
+    healthRect = goodHealthMeter(MarineHealth)
+    draw.rect(screen, (0, 255, 0), healthRect)
+
+    win = checkWinLevel(badGuys)
+    if win:
+        screen.fill((211, 211, 211))
+        screen.blit((transform.scale((image.load("Pictures/victory.png")), (1000, 600))), (10, 0))
+
+    lose = checkLoseLevel(MarineHealth)
+    if lose:
+        screen.fill((0, 0, 0))
+    display.flip()
 
 
 def title():
@@ -474,52 +521,9 @@ def room_1():
 
         gunHeat -= 1
         moveShots(shots)
+        drawScene()
         moveGuy(guyx, guyy)
         myClock.tick(60)
-
-        screen.blit(back1, (0, 0))
-        pic = transform.scale(guy, (50, 50))
-        turn()
-        pic = transform.rotate(pic, angle)
-        screen.blit(pic, (guyx - 17, guyy - 17))
-        shoot1 = image.load("Pictures/shot.png")
-        shoot1 = transform.scale(shoot1, (10, 10))
-        shoot2 = image.load("Pictures/redbullet.png").convert()
-        shoot2 = transform.scale(shoot2, (7, 7))
-
-        for crate in Wcrates:
-            weaponcrate = transform.scale(crat, (40, 40))
-            screen.blit(weaponcrate, (crate[0], crate[1]))
-            checkUpgrade(Wcrates, guyx, guyy)
-
-        for shot in shots[:]:
-            screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
-            #draw.circle(screen,(30,30,255),(int(shot[X]),int(shot[Y])),3)
-            used = checkKill(shot[X], shot[Y])
-
-            if used:
-                shots.remove(shot)
-
-        for bguy in badGuys:
-            moveBadGuys(bguy, guyx, guyy)
-            alien1 = transform.rotate(badguy1, bguy[2])
-            screen.blit(alien1, bguy[:2])
-            eRect = enemyRect(bguy)
-
-        grect = guyRect(guyx, guyy)
-        draw.rect(screen, (0, 0, 0), (grect), 1)
-        checkHit(grect)
-        healthRect = goodHealthMeter(MarineHealth)
-        draw.rect(screen, (0, 255, 0), healthRect)
-
-        win = checkWinLevel(badGuys)
-        if win:
-            screen.fill((211, 211, 211))
-            screen.blit((transform.scale((image.load("Pictures/victory.png")), (1000, 600))), (10, 0))
-
-        lose = checkLoseLevel(MarineHealth)
-        if lose:
-            screen.fill((0, 0, 0))
         display.flip()
     return 'title'
 
