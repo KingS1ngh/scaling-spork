@@ -27,11 +27,11 @@ mx, my = mouse.get_pos()
 mb = mouse.get_pressed()
 Class = 'Scout'
 weapon = 'Rifle'
+guy = image.load('Pictures/'+weapon+' '+Class+'.png')
 shots = []
 gunAng = 0.0
 power = 5.0
 gunHeat = 0
-guy = image.load('Pictures/'+weapon+' '+Class+'.png')
 keys = key.get_pressed()
 BADSPEED = 1
 badGuys = [[randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
@@ -174,7 +174,7 @@ def moveShots(shots):
 
 
 def enemyRect(bguy):
-    eRect = Rect(bguy[0]+35, bguy[1]+35, 30, 30)
+    eRect = Rect(bguy[0]+35, bguy[1]+35, 40, 40)
     return eRect
 
 
@@ -215,7 +215,6 @@ def checkUpgrade(Wcrates, guyx, guyy):
     for crate in Wcrates:
 
         crateRect = Rect(crate[0], crate[1], 40, 40)
-        draw.rect(screen, (0, 0, 0), crateRect, 1)
 
         if crateRect.collidepoint(guyx + 15, guyy + 15):
             Wcrates.remove(crate)
@@ -261,15 +260,10 @@ def drawScene(badGuys):
         eRect = enemyRect(bguy)
 
     grect = guyRect(guyx, guyy)
-    draw.rect(screen, (0, 0, 0), (grect), 1)
     checkHit(grect)
     healthRect = goodHealthMeter(MarineHealth)
     draw.rect(screen, (0, 255, 0), healthRect)
 
-    win = checkWinLevel(badGuys)
-    if win:
-        screen.fill((211, 211, 211))
-        screen.blit((transform.scale((image.load("Pictures/victory.png")), (1000, 600))), (10, 0))
 
     lose = checkLoseLevel(MarineHealth)
     if lose:
@@ -526,7 +520,6 @@ def room_1():
         myClock.tick(60)
         display.flip()
     return 'title'
-#suck tha nigga dick fo free
 
 page = 'classSelect'
 while page != 'exit':
