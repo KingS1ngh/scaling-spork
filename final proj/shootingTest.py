@@ -183,8 +183,6 @@ def checkKill(x, y):
         rect = enemyRect(bguy)
         if rect.collidepoint(x, y):
             badGuys.remove(bguy)
-            return True
-    return False
 
 
 def checkHit(rect):
@@ -196,6 +194,8 @@ def checkHit(rect):
             MarineHealth -= 10
             badGuys.remove(bguy)
             bombs.append([bguy[0], bguy[1]])
+            return True
+    return False
 
 
 def checkWinLevel(badGuys):
@@ -263,7 +263,6 @@ def drawScene(badGuys):
     checkHit(grect)
     healthRect = goodHealthMeter(MarineHealth)
     draw.rect(screen, (0, 255, 0), healthRect)
-
 
     lose = checkLoseLevel(MarineHealth)
     if lose:
