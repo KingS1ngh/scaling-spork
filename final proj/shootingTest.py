@@ -212,6 +212,7 @@ def checkLoseLevel(health):
 def checkUpgrade(Wcrates, guyx, guyy):
     global guy
     global crateNum
+    global weapon
     for crate in Wcrates:
 
         crateRect = Rect(crate[0], crate[1], 40, 40)
@@ -220,9 +221,14 @@ def checkUpgrade(Wcrates, guyx, guyy):
             Wcrates.remove(crate)
             crateNum += 1
 
-    if crateNum == 1: guy = image.load("Pictures/Plasma Marine.png")
-    if crateNum == 2: guy = image.load("Pictures/Rifle Marine.png")
-    if crateNum == 3: guy = image.load("Pictures/Sniper Marine.png")
+    if crateNum == 1 and Class == 'Scout': weapon = 'Sniper'
+    if crateNum == 1 and Class == 'Marine': weapon = 'Plasma'
+    if crateNum == 1 and Class == 'Tank': weapon = 'Shotgun'
+    if crateNum == 2 and Class == 'Scout': weapon = 'Cannon'
+    if crateNum == 2 and Class == 'Marine': weapon = 'Sniper'
+    if crateNum == 2 and Class == 'Tank': weapon = 'Minigun'
+    if crateNum == 3 and Class == 'Marine': weapon = 'Machine'
+    if crateNum == 3 and Class == 'Tank': weapon = 'Melee'
 
 
 def goodHealthMeter(health):
@@ -231,6 +237,7 @@ def goodHealthMeter(health):
 
 def drawScene(badGuys):
     screen.blit(back1, (0, 0))
+    guy = image.load('Pictures/' + weapon + ' ' + Class + '.png')
     pic = transform.scale(guy, (50, 50))
     turn()
     pic = transform.rotate(pic, angle)
@@ -503,6 +510,8 @@ def room_1():
                 if evnt.key == K_ESCAPE:
                     room_1Running = False
 
+        print(Class)
+        print(weapon)
         keys = key.get_pressed()
         if keys[27]:
             break
@@ -520,7 +529,7 @@ def room_1():
         display.flip()
     return 'title'
 
-page = 'title'
+page = 'classSelect'
 while page != 'exit':
     if page == 'title':
         page = title()
