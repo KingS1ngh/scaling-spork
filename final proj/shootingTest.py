@@ -499,8 +499,11 @@ def room_1():
     global gunHeat
     global Class
     global weapon
+    global badGuys
+    global Wcrates
     room_1Running = True
-
+    badGuys=[[100,700,0],[10,500,0]]
+    Wcrates=[[10,10],[20,20]]
     while room_1Running:
         for evnt in event.get():
             if evnt.type == QUIT:
