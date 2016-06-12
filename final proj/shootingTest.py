@@ -34,12 +34,17 @@ power = 5.0
 gunHeat = 0
 keys = key.get_pressed()
 BADSPEED = 1
-badGuys = [[randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
-           [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
-           [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0],
-           [randint(0, 800), randint(0, 600), 0], [randint(0, 800), randint(0, 600), 0]]
+badGuys = []
 Wcrates = [[200, 300], [500, 70], [400, 400]]
 bombs = []
+right = (924, 325)
+up = (487, 0)
+left = (0, 325)
+down = (487, 600)
+rightRect = Rect(934, 330, 80, 30)
+upRect = Rect(492, 5, 30, 80)
+leftRect = Rect(5, 335, 80, 30)
+downRect = Rect(497, 605, 30, 80)
 
 titleScreen = image.load('Pictures/Title Screen.png').convert()
 titleBack = transform.scale(titleScreen, (1035, 800))
@@ -92,6 +97,12 @@ back1 = transform.scale(back1, (2000, 2000))
 badguy1 = image.load("Pictures/Alien 1.png")
 badguy1 = transform.scale(badguy1, (60, 60))
 crat = image.load("Pictures/Crate 1.png")
+arrow = image.load('Pictures/arrow.png')
+rightArrow = transform.scale(arrow, (100,50))
+upArrow = transform.rotate(rightArrow, (90))
+leftArrow = transform.rotate(rightArrow, (180))
+downArrow = transform.rotate(rightArrow, (270))
+
 
 for i in range(1, 17):
     bombPics.append(image.load("explosion/explosion"+str(i)+".png"))
@@ -235,7 +246,8 @@ def goodHealthMeter(health):
     healthRect = Rect(10, 10, 10+(health*2), 20)
     return healthRect
 
-def drawScene(badGuys):
+
+def drawScene(badGuys,arrows):
     screen.blit(back1, (0, 0))
     guy = image.load('Pictures/' + weapon + ' ' + Class + '.png')
     pic = transform.scale(guy, (50, 50))
@@ -270,6 +282,18 @@ def drawScene(badGuys):
     checkHit(grect)
     healthRect = goodHealthMeter(MarineHealth)
     draw.rect(screen, (0, 255, 0), healthRect)
+
+    win = checkWinLevel(badGuys)
+    if win:
+        for arrow in arrows:
+            if arrow == right:
+                screen.blit(rightArrow, right)
+            if arrow == up:
+                screen.blit(upArrow, up)
+            if arrow == left:
+                screen.blit(leftArrow, left)
+            if arrow == down:
+                screen.blit(downArrow, down)
 
     lose = checkLoseLevel(MarineHealth)
     if lose:
@@ -496,14 +520,18 @@ def armory():
 
 def room_1():
     global running
-    global gunHeat
     global Class
+    global gunHeat
     global weapon
     global badGuys
     global Wcrates
+    global guyx
+    global guyy
     room_1Running = True
     badGuys=[[100,700,0],[10,500,0]]
     Wcrates=[[10,10],[20,20]]
+    arrows = [up]
+
     while room_1Running:
         for evnt in event.get():
             if evnt.type == QUIT:
@@ -513,8 +541,6 @@ def room_1():
                 if evnt.key == K_ESCAPE:
                     room_1Running = False
 
-        print(Class)
-        print(weapon)
         keys = key.get_pressed()
         if keys[27]:
             break
@@ -526,13 +552,673 @@ def room_1():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys)
+        drawScene(badGuys, arrows)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
+
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if upRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 660
+                return 'room_2'
+
+
+def room_2():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_2Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [up,right,left,down]
+
+    while room_2Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_2Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_2Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if upRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 660
+                return 'room_6'
+            if leftRect.collidepoint(guyx, guyy):
+                guyx = 1000
+                guyy = 350
+                return 'room_3'
+            if rightRect.collidepoint(guyx, guyy):
+                guyx = 25
+                guyy = 350
+                return 'room_4'
+            if downRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 25
+                return 'room_1'
     return 'title'
 
-page = 'classSelect'
+
+def room_3():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_3Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[[100,600]]
+    arrows = [up, right]
+
+    while room_3Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_3Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_3Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if upRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 660
+                return 'room_5'
+            if rightRect.collidepoint(guyx, guyy):
+                guyx = 25
+                guyy = 350
+                return 'room_2'
+    return 'title'
+
+
+def room_4():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_4Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [up, left]
+
+    while room_4Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_4Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_4Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if upRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 660
+                return 'room_7'
+            if leftRect.collidepoint(guyx, guyy):
+                guyx = 1000
+                guyy = 350
+                return 'room_2'
+    return 'title'
+
+
+def room_5():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_5Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [up, right, down]
+
+    while room_5Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_5Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_5Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if upRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 660
+                return 'room_8'
+            if rightRect.collidepoint(guyx, guyy):
+                guyx = 25
+                guyy = 350
+                return 'room_6'
+            if downRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 25
+                return 'room_3'
+    return 'title'
+
+
+def room_6():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_6Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [up,right,left,down]
+
+    while room_6Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_6Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_6Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if upRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 660
+                return 'room_9'
+            if leftRect.collidepoint(guyx, guyy):
+                guyx = 1000
+                guyy = 350
+                return 'room_5'
+            if rightRect.collidepoint(guyx, guyy):
+                guyx = 25
+                guyy = 350
+                return 'room_7'
+            if downRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 25
+                return 'room_2'
+    return 'title'
+
+
+def room_7():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_7Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [up,left,down]
+
+    while room_7Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_7Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_7Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if upRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 660
+                return 'room_10'
+            if leftRect.collidepoint(guyx, guyy):
+                guyx = 1000
+                guyy = 350
+                return 'room_6'
+            if downRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 25
+                return 'room_4'
+    return 'title'
+
+
+def room_8():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_8Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [up,right,down]
+
+    while room_8Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_8Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_8Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if upRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 660
+                return 'room_12'
+            if rightRect.collidepoint(guyx, guyy):
+                guyx = 25
+                guyy = 350
+                return 'room_9'
+            if downRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 25
+                return 'room_5'
+    return 'title'
+
+
+def room_9():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_9Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [up,right,left,down]
+
+    while room_9Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_9Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_9Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if upRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 660
+                return 'room_11'
+            if leftRect.collidepoint(guyx, guyy):
+                guyx = 1000
+                guyy = 350
+                return 'room_8'
+            if rightRect.collidepoint(guyx, guyy):
+                guyx = 25
+                guyy = 350
+                return 'room_10'
+            if downRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 25
+                return 'room_6'
+    return 'title'
+
+
+def room_10():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_10Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [up,left,down]
+
+    while room_10Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_10Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_10Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if upRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 660
+                return 'room_13'
+            if leftRect.collidepoint(guyx, guyy):
+                guyx = 1000
+                guyy = 350
+                return 'room_9'
+            if downRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 25
+                return 'room_7'
+    return 'title'
+
+
+def room_11():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_11Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [down]
+
+    while room_11Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_11Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_11Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if downRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 25
+                return 'room_9'
+    return 'title'
+
+
+def room_12():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_12Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [down]
+
+    while room_12Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_12Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_12Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if downRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 25
+                return 'room_8'
+    return 'title'
+
+
+def room_13():
+    global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global Wcrates
+    global guyx
+    global guyy
+    room_13Running = True
+    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    Wcrates=[]
+    arrows = [down]
+
+    while room_13Running:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                room_13Running = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_ESCAPE:
+                    room_13Running = False
+
+        keys = key.get_pressed()
+        if keys[27]:
+            break
+
+        mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = 15
+            shots.append(addShot(-angle - 90, power))
+
+        gunHeat -= 1
+        moveShots(shots)
+        drawScene(badGuys, arrows)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        display.flip()
+
+        win = checkWinLevel(badGuys)
+        if win:
+            if downRect.collidepoint(guyx, guyy):
+                guyx = 512
+                guyy = 25
+                return 'room_10'
+    return 'title'
+
+
+page = 'menu'
 while page != 'exit':
     if page == 'title':
         page = title()
@@ -550,6 +1236,30 @@ while page != 'exit':
         page = armory()
     if page == 'room_1':
         page = room_1()
+    if page == 'room_2':
+        page = room_2()
+    if page == 'room_3':
+        page = room_3()
+    if page == 'room_4':
+        page = room_4()
+    if page == 'room_5':
+        page = room_5()
+    if page == 'room_6':
+        page = room_6()
+    if page == 'room_7':
+        page = room_7()
+    if page == 'room_8':
+        page = room_8()
+    if page == 'room_9':
+        page = room_9()
+    if page == 'room_10':
+        page = room_10()
+    if page == 'room_11':
+        page = room_11()
+    if page == 'room_12':
+        page = room_12()
+    if page == 'room_13':
+        page = room_13()
     if not running:
         page = 'exit'
 quit()
