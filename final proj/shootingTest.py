@@ -252,8 +252,8 @@ def goodHealthMeter(health):
     return healthRect
 
 
-def drawScene(badGuys,arrows):
-    screen.blit(back1, (0, 0))
+def drawScene(badGuys,arrows,back):
+    screen.blit(back, (0, 0))
     guy = image.load('Pictures/' + weapon + ' ' + Class + '.png')
     pic = transform.scale(guy, (50, 50))
     turn()
@@ -301,60 +301,6 @@ def drawScene(badGuys,arrows):
                 screen.blit(downArrow, down)
             if arrow == hole:
                 screen.blit(hole, (487, 325))
-
-    lose = checkLoseLevel(MarineHealth)
-    if lose:
-        screen.fill((0, 0, 0))
-    display.flip()
-
-
-def drawScene2(badGuys,arrows):
-    screen.blit(back2, (0, 0))
-    guy = image.load('Pictures/' + weapon + ' ' + Class + '.png')
-    pic = transform.scale(guy, (50, 50))
-    turn()
-    pic = transform.rotate(pic, angle)
-    screen.blit(pic, (guyx - 17, guyy - 17))
-    shoot1 = image.load("Pictures/shot.png")
-    shoot1 = transform.scale(shoot1, (10, 10))
-    shoot2 = image.load("Pictures/redbullet.png").convert()
-    shoot2 = transform.scale(shoot2, (7, 7))
-
-    for crate in Wcrates:
-        weaponcrate = transform.scale(crat, (40, 40))
-        screen.blit(weaponcrate, (crate[0], crate[1]))
-        checkUpgrade(Wcrates, guyx, guyy)
-
-    for shot in shots[:]:
-        screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
-        # draw.circle(screen,(30,30,255),(int(shot[X]),int(shot[Y])),3)
-        used = checkKill(shot[X], shot[Y])
-
-        if used:
-            shots.remove(shot)
-
-    for bguy in badGuys:
-        moveBadGuys(bguy, guyx, guyy)
-        alien1 = transform.rotate(badguy1, bguy[2])
-        screen.blit(alien1, bguy[:2])
-        eRect = enemyRect(bguy)
-
-    grect = guyRect(guyx, guyy)
-    checkHit(grect)
-    healthRect = goodHealthMeter(MarineHealth)
-    draw.rect(screen, (0, 255, 0), healthRect)
-
-    win = checkWinLevel(badGuys)
-    if win:
-        for arrow in arrows:
-            if arrow == right:
-                screen.blit(rightArrow, right)
-            if arrow == up:
-                screen.blit(upArrow, up)
-            if arrow == left:
-                screen.blit(leftArrow, left)
-            if arrow == down:
-                screen.blit(downArrow, down)
 
     lose = checkLoseLevel(MarineHealth)
     if lose:
@@ -594,6 +540,7 @@ def room_1():
     arrows = [up]
 
     while room_1Running:
+        print(round(myClock.get_fps()))
         for evnt in event.get():
             if evnt.type == QUIT:
                 running = False
@@ -613,7 +560,7 @@ def room_1():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows,back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -661,7 +608,7 @@ def room_2():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -721,7 +668,7 @@ def room_3():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -773,7 +720,7 @@ def room_4():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -825,7 +772,7 @@ def room_5():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -881,7 +828,7 @@ def room_6():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -941,7 +888,7 @@ def room_7():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -997,7 +944,7 @@ def room_8():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1053,7 +1000,7 @@ def room_9():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1113,7 +1060,7 @@ def room_10():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1169,7 +1116,7 @@ def room_11():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1221,7 +1168,7 @@ def room_12():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1269,7 +1216,7 @@ def room_13():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows)
+        drawScene(badGuys, arrows, back1)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1317,7 +1264,7 @@ def room_1B():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene2(badGuys, arrows)
+        drawScene(badGuys, arrows, back2)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1365,7 +1312,7 @@ def room_2B():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene2(badGuys, arrows)
+        drawScene(badGuys, arrows, back2)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1417,7 +1364,7 @@ def room_3B():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene2(badGuys, arrows)
+        drawScene(badGuys, arrows, back2)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1462,7 +1409,7 @@ def room_4B():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene2(badGuys, arrows)
+        drawScene(badGuys, arrows, back2)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1476,7 +1423,7 @@ def room_4B():
     return 'title'
 
 
-page = 'room_9'
+page = 'room_1'
 while page != 'exit':
     if page == 'title':
         page = title()
