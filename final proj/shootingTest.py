@@ -43,7 +43,7 @@ rightRect = Rect(934, 330, 80, 30)
 upRect = Rect(492, 5, 30, 80)
 leftRect = Rect(5, 335, 80, 30)
 downRect = Rect(497, 605, 30, 80)
-holeRect = Rect(512, 350, 50, 50)
+holeRect = Rect(487, 325, 50, 50)
 
 titleScreen = image.load('Pictures/Title Screen.png').convert()
 titleBack = transform.scale(titleScreen, (1035, 800))
@@ -1543,7 +1543,7 @@ def room_4B():
     return 'title'
 
 
-page = 'room_1B'
+page = 'room_11'
 while page != 'exit':
     if page == 'title':
         page = title()
