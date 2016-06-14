@@ -369,6 +369,15 @@ def drawScene(badGuys, arrows, back, builds):
     display.flip()
 
 
+def fadeIn():
+    image=screen.copy().convert()
+    for i in range(255):
+        screen.fill((0,0,0))
+        image.set_alpha(255-i)
+        screen.blit(image,(0,0))
+        display.flip()
+        time.delay(2)
+
 def title():
     global running
     startRect = Rect(422, 525, 200, 75)
@@ -595,6 +604,7 @@ def armory():
 
 
 def room_1():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -647,6 +657,7 @@ def room_1():
 
 
 def room_2():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -710,6 +721,7 @@ def room_2():
 
 
 def room_3():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -765,6 +777,7 @@ def room_3():
 
 
 def room_4():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -820,6 +833,7 @@ def room_4():
 
 
 def room_5():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -879,6 +893,7 @@ def room_5():
 
 
 def room_6():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -942,6 +957,7 @@ def room_6():
 
 
 def room_7():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1001,6 +1017,7 @@ def room_7():
 
 
 def room_8():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1060,6 +1077,7 @@ def room_8():
 
 
 def room_9():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1123,6 +1141,7 @@ def room_9():
 
 
 def room_10():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1182,6 +1201,7 @@ def room_10():
 
 
 def room_11():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1237,6 +1257,7 @@ def room_11():
 
 
 def room_12():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1288,6 +1309,7 @@ def room_12():
 
 
 def room_13():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1339,6 +1361,7 @@ def room_13():
 
 
 def room_1B():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1390,6 +1413,7 @@ def room_1B():
 
 
 def room_2B():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1445,6 +1469,7 @@ def room_2B():
 
 
 def room_3B():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1493,6 +1518,7 @@ def room_3B():
 
 
 def room_4B():
+    fadeIn()
     global running
     global Class
     global gunHeat
@@ -1543,7 +1569,7 @@ def room_4B():
     return 'title'
 
 
-page = 'room_11'
+page = 'title'
 while page != 'exit':
     if page == 'title':
         page = title()
