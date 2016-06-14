@@ -17,14 +17,16 @@ C = 4
 angle = 0
 crateNum = 0
 bombPics = []
-currentHealth = 40
-maxHealth = 40
 yellow = 255, 255, 0
 red = 255, 0, 0
 mx, my = mouse.get_pos()
 mb = mouse.get_pressed()
 Class = 'Scout'
 weapon = 'Rifle'
+item = 'none'
+currentHealth = 40
+maxHealth = 40
+lastRoom = 'room_1'
 guy = image.load('Pictures/'+weapon+' '+Class+'.png')
 shots = []
 gunAng = 0.0
@@ -47,14 +49,15 @@ holeRect = Rect(487, 325, 50, 50)
 
 titleScreen = image.load('Pictures/Title Screen.png').convert()
 titleBack = transform.scale(titleScreen, (1035, 800))
-campaignButtonPic = image.load('Pictures/Campaign Pressed.png')
+
+campaignButtonPic = image.load('Pictures/Campaign.png')
 campaignButton = transform.scale(campaignButtonPic, (200, 50))
 
-endlessButtonPic = image.load('Pictures/Endless Pressed.png')
+endlessButtonPic = image.load('Pictures/Endless.png')
 endlessButton = transform.scale(endlessButtonPic, (200, 50))
 
-armoryButtonPic = image.load('Pictures/Armory Pressed.png')
-armoryButton = transform.scale(armoryButtonPic, (200, 50))
+instructionsButtonPic = image.load('Pictures/Instructions.png')
+instructionsButton = transform.scale(instructionsButtonPic, (300, 50))
 
 newPic = image.load('Pictures/New Game Button.png')
 newButton = transform.scale(newPic, (200, 50))
@@ -87,6 +90,26 @@ tankName = image.load('Pictures/Tank Name.png')
 tankLable = transform.scale(tankName, (100, 50))
 tankWords = image.load('Pictures/Tank Stats.png')
 tankInfo = transform.scale(tankWords, (300, 175))
+
+next = image.load('Pictures/Next.png')
+next = transform.scale(next, (125, 100))
+back = image.load('Pictures/Back.png')
+back = transform.scale(back, (150, 75))
+story = image.load('Pictures/Story.png')
+story = transform.scale(story, (525, 163))
+controls = image.load('Pictures/Controls.png')
+controls = transform.scale(controls, (525, 163))
+roomExplain = image.load('Pictures/Rooms.png')
+roomExplain = transform.scale(roomExplain, (525, 163))
+goal = image.load('Pictures/Goal.png')
+goal = transform.scale(goal, (525, 163))
+
+resume = image.load('Pictures/Resume.png')
+resume = transform.scale(resume, (175, 50))
+saveQuit = image.load('Pictures/Save+Quit.png')
+saveQuit = transform.scale(saveQuit, (275, 50))
+quitButton = image.load('Pictures/Quit.png')
+quitButton = transform.scale(quitButton, (100, 50))
 
 rilfeScout = image.load('Pictures/Rifle Scout.png')
 back1 = image.load("Pictures/Level One Background.png").convert()
@@ -173,9 +196,9 @@ def moveGuy(x, y):
     if keys[ord("s")]:
         guyy += 5
     if guyx < 0: guyx = 0
-    if guyx > 1350 - 35: guyx = 1350 - 35
+    if guyx > 1024 - 35: guyx = 1024 - 35
     if guyy < 0: guyy = 0
-    if guyy > 768 - 35: guyy = 768 - 35
+    if guyy > 700 - 35: guyy = 700 - 35
 
 
 def turn():
@@ -226,7 +249,7 @@ def moveShots(shots):
     for shot in shots:
         shot[X] += shot[VX]
         shot[Y] += shot[VY]
-        if shot[X] > guyx+800 or guyx-800 > shot[X] or guyy-600 > shot[Y] or shot[Y] > guyy+600:
+        if shot[X] > guyx+400 or guyx-400 > shot[X] or guyy-400 > shot[Y] or shot[Y] > guyy+400:
             killlist.append(shot)
     for s in killlist:
         shots.remove(s)
@@ -372,9 +395,9 @@ def drawScene(badGuys, arrows, back, builds):
 def fadeIn():
     image=screen.copy().convert()
     for i in range(255):
-        screen.fill((0,0,0))
+        screen.fill((0, 0, 0))
         image.set_alpha(255-i)
-        screen.blit(image,(0,0))
+        screen.blit(image, (0, 0))
         display.flip()
         time.delay(2)
 
@@ -388,7 +411,6 @@ def title():
                 running = False
         screen.blit(titleBack, (0, 0))
         screen.blit(start, (425, 525))
-        draw.rect(screen, yellow, startRect, 2)
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
         if startRect.collidepoint(mx, my) and mb[0] == 1:
@@ -401,94 +423,92 @@ def gameLoad():
     gameLoadRunning = True
     newRect = Rect(230, 525, 198, 45)
     loadRect = Rect(595, 525, 198, 45)
+    backRect = Rect(0, 630, 150, 75)
 
     while gameLoadRunning:
         for evnt in event.get():
             if evnt.type == QUIT:
                 running = False
                 gameLoadRunning = False
-            if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    gameLoadRunning = False
+
         screen.blit(titleBack, (0, 0))
         screen.blit(newButton, (230, 525))
         screen.blit(loadButton, (595, 525))
+        screen.blit(back, (0, 630))
 
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
-        draw.rect(screen, yellow, newRect, 2)
-        draw.rect(screen, yellow, loadRect, 2)
         if newRect.collidepoint(mx, my) and mb[0] == 1:
             return 'menu'
         if loadRect.collidepoint(mx, my) and mb[0] == 1:
             return 'load'
+        if backRect.collidepoint(mx, my) and mb[0] == 1:
+            return 'title'
         display.flip()
-    return 'title'
 
 
 def load():
     global running
     loadRunning = True
+    backRect = Rect(0, 555, 150, 75)
+    save1 = Rect(435, 483, 160, 50)
+    save2 = Rect(435, 556, 160, 50)
+    save3 = Rect(435, 623, 160, 50)
 
     while loadRunning:
         for evnt in event.get():
             if evnt.type == QUIT:
                 running = False
                 loadRunning = False
-            if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    loadRunning = False
+
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
         screen.blit(titleBack, (0, 0))
-        saveRects = [Rect(435, 483, 160, 50), Rect(435, 556, 160, 50), Rect(435, 623, 160, 50)]
+        screen.blit(back, (0, 555))
         myFiles = glob.glob('*.txt')
-        for s, f in zip(saveRects, myFiles):
-            draw.rect(screen, yellow, s, 2)
-            if len(myFiles) >= 1:
-                screen.blit(armoryButton, (415, 480))
-            if len(myFiles) >= 2:
-                screen.blit(armoryButton, (415, 553))
-            if len(myFiles) == 3:
-                screen.blit(armoryButton, (415, 620))
-        if Rect(305, 375, 190, 55).collidepoint(mx, my) and mb[0] == 1:
+        if len(myFiles) >= 1:
+            screen.blit(campaignButton, (415, 480))
+        if len(myFiles) >= 2:
+            screen.blit(campaignButton, (415, 553))
+        if len(myFiles) == 3:
+            screen.blit(campaignButton, (415, 620))
+        if save1.collidepoint(mx, my) and mb[0] == 1:
             saveFile = open('Save 1.txt', 'r')
             save = saveFile.readlines()
             saveFile.close()
             print(save)
+        if backRect.collidepoint(mx, my) and mb[0] == 1:
+            return 'gameLoad'
         display.flip()
-    return 'title'
 
 
 def menu():
     global running
     menuRunning = True
     buttons = [Rect(420, 480, 190, 55), Rect(435, 553, 160, 45), Rect(435, 623, 160, 50)]
-    screens = ['classSelect', 'endless', 'armory']
-    mx, my = mouse.get_pos()
-    mb = mouse.get_pressed()
+    screens = ['classSelect', 'endless', 'instructions']
+    backRect = Rect(0, 555, 150, 75)
 
-    while running:
+    while menuRunning:
         for evnt in event.get():
             if evnt.type == QUIT:
                 running = False
                 menuRunning = False
-            if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    menuRunning = False
+
         screen.blit(titleBack, (0, 0))
         screen.blit(campaignButton, (415, 480))
         screen.blit(endlessButton, (415, 553))
-        screen.blit(armoryButton, (415, 620))
+        screen.blit(instructionsButton, (415, 620))
+        screen.blit(back, (0, 555))
 
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
         for b, s in zip(buttons, screens):
-            draw.rect(screen, yellow, b, 2)
             if b.collidepoint(mx, my) and mb[0] == 1:
                 return s
+        if backRect.collidepoint(mx, my) and mb[0] == 1:
+            return 'title'
         display.flip()
-    return 'title'
 
 
 def classSelect():
@@ -498,30 +518,29 @@ def classSelect():
     global weapon
     global maxHealth
     global currentHealth
+    backRect = Rect(0, 630, 150, 75)
+    scoutRect = Rect(173, 390, 75, 75)
+    marineRect = Rect(470, 390, 75, 75)
+    tankRect = Rect(787, 390, 75, 75)
+    startRect = Rect(410, 555, 200, 75)
 
     while classSelectRunning:
         for evnt in event.get():
             if evnt.type == QUIT:
                 running = False
                 classSelectRunning = False
-            if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    classSelectRunning = False
-        scoutRect = Rect(173, 390, 75, 75)
-        marineRect = Rect(470, 390, 75, 75)
-        tankRect = Rect(787, 390, 75, 75)
-        startRect = Rect(410, 555, 200, 75)
+
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
-
         screen.blit(classBack, (0, 0))
         screen.blit(rScout, (185, 400))
-        screen.blit(rMarine, (483, 400))
         screen.blit(pTank, (800, 400))
+        screen.blit(rMarine, (483, 400))
         screen.blit(classTitle, (325, 100))
         screen.blit(scoutLable, (140, 475))
         screen.blit(marineLable, (435, 475))
         screen.blit(tankLable, (775, 475))
+        screen.blit(back, (0, 630))
         screenBuff = screen.copy()
         if scoutRect.collidepoint(mx, my) and mb[0] == 1:
             Class = 'Scout'
@@ -567,8 +586,9 @@ def classSelect():
             screenBuff = screen.copy()
         if startRect.collidepoint(mx, my) and mb[0] == 1 and Class != '':
             return 'room_1'
+        if backRect.collidepoint(mx, my) and mb[0] == 1:
+            return 'menu'
         display.flip()
-    return 'menu'
 
 
 def endless():
@@ -580,27 +600,68 @@ def endless():
             if evnt.type == QUIT:
                 running = False
                 endlessRunning = False
-            if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    endlessRunning = False
+
+        mx, my = mouse.get_pos()
+        mb = mouse.get_pressed()
         display.flip()
     return 'menu'
 
 
-def armory():
+def instructions():
     global running
-    armoryRunning = True
+    instructionsRunning = True
+    backRect = Rect(0, 630, 150, 75)
 
-    while armoryRunning:
+    while instructionsRunning:
         for evnt in event.get():
             if evnt.type == QUIT:
                 running = False
-                armoryRunning = False
-            if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    armoryRunning = False
+                instructionsRunning = False
+
+        mx, my = mouse.get_pos()
+        mb = mouse.get_pressed()
+        screen.blit(classBack, (0, 0))
+        screen.blit(story, (250, 10))
+        screen.blit(controls, (250, 183))
+        screen.blit(roomExplain, (250, 346))
+        screen.blit(goal, (250, 515))
+        screen.blit(hole, (600, 635))
+        screen.blit(back, (0, 630))
+        if backRect.collidepoint(mx, my) and mb[0] == 1:
+            return 'menu'
         display.flip()
-    return 'menu'
+
+
+def pause():
+    global running
+    global lastRoom
+    pauseRunning = True
+    resumeRect = Rect(425, 225, 175, 50)
+    saveQuitRect = Rect(375, 325, 275, 50)
+    quitRect = Rect(462, 425, 100, 50)
+    image = screen.copy().convert()
+
+    while pauseRunning:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                pauseRunning = False
+
+        mx, my = mouse.get_pos()
+        mb = mouse.get_pressed()
+        screen.fill((0, 0, 0))
+        image.set_alpha(150)
+        screen.blit(image, (0, 0))
+        screen.blit(resume, (425, 225))
+        screen.blit(saveQuit, (375, 325))
+        screen.blit(quitButton, (462, 425))
+        display.flip()
+        if resumeRect.collidepoint(mx, my) and mb[0] == 1:
+            return lastRoom
+        if saveQuitRect.collidepoint(mx, my) and mb[0] == 1:
+            return 'menu'
+        if quitRect.collidepoint(mx, my) and mb[0] == 1:
+            return 'menu'
 
 
 def room_1():
@@ -614,8 +675,10 @@ def room_1():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_1Running = True
-    badGuys=[[512,350,0],[522,360,0]]
+    lastRoom = 'room_1'
+    badGuys=[[100,100,0]]
     Wcrates=[]
     arrows = [up]
     builds = [[ship9, 50, 300]]
@@ -627,8 +690,8 @@ def room_1():
                 running = False
                 room_1Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_1Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -645,8 +708,6 @@ def room_1():
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
-
-
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -667,7 +728,9 @@ def room_2():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_2Running = True
+    lastRoom = 'room_2'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up,right,left,down]
@@ -680,8 +743,8 @@ def room_2():
                 running = False
                 room_2Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_2Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -731,7 +794,9 @@ def room_3():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_3Running = True
+    lastRoom = 'room_3'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up, right]
@@ -744,8 +809,8 @@ def room_3():
                 running = False
                 room_3Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_3Running = False
+                if evnt.key == K_p:
+                    return 'pause'
 
         keys = key.get_pressed()
         if keys[27]:
@@ -787,7 +852,9 @@ def room_4():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_4Running = True
+    lastRoom = 'room_4'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[[100,600,1]]
     arrows = [up, left]
@@ -800,8 +867,8 @@ def room_4():
                 running = False
                 room_4Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_4Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -843,7 +910,9 @@ def room_5():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_5Running = True
+    lastRoom = 'room_5'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up, right, down]
@@ -856,8 +925,8 @@ def room_5():
                 running = False
                 room_5Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_5Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -903,7 +972,9 @@ def room_6():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_6Running = True
+    lastRoom = 'room_6'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up,right,left,down]
@@ -916,8 +987,8 @@ def room_6():
                 running = False
                 room_6Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_6Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -967,7 +1038,9 @@ def room_7():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_7Running = True
+    lastRoom = 'room_7'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up,left,down]
@@ -980,8 +1053,8 @@ def room_7():
                 running = False
                 room_7Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_7Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1027,7 +1100,9 @@ def room_8():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_8Running = True
+    lastRoom = 'room_8'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[[100,600,2]]
     arrows = [up,right,down]
@@ -1040,8 +1115,8 @@ def room_8():
                 running = False
                 room_8Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_8Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1087,7 +1162,9 @@ def room_9():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_9Running = True
+    lastRoom = 'room_9'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up,right,left,down]
@@ -1100,8 +1177,8 @@ def room_9():
                 running = False
                 room_9Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_9Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1151,7 +1228,9 @@ def room_10():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_10Running = True
+    lastRoom = 'room_10'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up,left,down]
@@ -1164,8 +1243,8 @@ def room_10():
                 running = False
                 room_10Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_10Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1211,7 +1290,9 @@ def room_11():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_11Running = True
+    lastRoom = 'room_11'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [down, hole]
@@ -1224,8 +1305,8 @@ def room_11():
                 running = False
                 room_11Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_11Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1267,7 +1348,9 @@ def room_12():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_12Running = True
+    lastRoom = 'room_12'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [down]
@@ -1280,8 +1363,8 @@ def room_12():
                 running = False
                 room_12Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_12Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1319,7 +1402,9 @@ def room_13():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_13Running = True
+    lastRoom = 'room_13'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[[900,100,3]]
     arrows = [down]
@@ -1332,8 +1417,8 @@ def room_13():
                 running = False
                 room_13Running = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_13Running = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1371,7 +1456,9 @@ def room_1B():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_1BRunning = True
+    lastRoom = 'room_1B'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up]
@@ -1384,8 +1471,8 @@ def room_1B():
                 running = False
                 room_1BRunning = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_1BRunning = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1423,7 +1510,9 @@ def room_2B():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_2BRunning = True
+    lastRoom = 'room_2B'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up]
@@ -1436,8 +1525,8 @@ def room_2B():
                 running = False
                 room_2BRunning = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_2BRunning = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1479,7 +1568,9 @@ def room_3B():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_3BRunning = True
+    lastRoom = 'room_3B'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = []
@@ -1492,8 +1583,8 @@ def room_3B():
                 running = False
                 room_3BRunning = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_3BRunning = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1528,7 +1619,9 @@ def room_4B():
     global Mcrates
     global guyx
     global guyy
+    global lastRoom
     room_4BRunning = True
+    lastRoom = 'room_4B'
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [left]
@@ -1541,8 +1634,8 @@ def room_4B():
                 running = False
                 room_4BRunning = False
             if evnt.type == KEYDOWN:
-                if evnt.key == K_ESCAPE:
-                    room_4BRunning = False
+                if evnt.key == K_p:
+                    return pause()
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1569,7 +1662,7 @@ def room_4B():
     return 'title'
 
 
-page = 'title'
+page = 'instructions'
 while page != 'exit':
     if page == 'title':
         page = title()
@@ -1583,8 +1676,8 @@ while page != 'exit':
         page = classSelect()
     if page == 'endless':
         page = endless()
-    if page == 'armory':
-        page = armory()
+    if page == 'instructions':
+        page = instructions()
     if page == 'room_1':
         page = room_1()
     if page == 'room_2':
