@@ -1,5 +1,4 @@
 from pygame import *
-from random import *
 from math import *
 import glob
 
@@ -7,8 +6,8 @@ screen = display.set_mode((1024, 700))
 myClock = time.Clock()
 running = True
 pos = ''
-guyx = 100
-guyy = 100
+guyx = 290
+guyy = 420
 SPACE = 32
 X = 0
 Y = 1
@@ -18,9 +17,8 @@ C = 4
 angle = 0
 crateNum = 0
 bombPics = []
-MarineHealth = 70
-TankHealth = 100
-ScoutHealth = 30
+currentHealth = 40
+maxHealth = 40
 yellow = 255, 255, 0
 red = 255, 0, 0
 mx, my = mouse.get_pos()
@@ -33,7 +31,7 @@ gunAng = 0.0
 power = 5.0
 gunHeat = 0
 keys = key.get_pressed()
-BADSPEED = 1
+BADSPEED = 2.5
 badGuys = []
 Wcrates = [[200, 300], [500, 70], [400, 400]]
 bombs = []
@@ -90,16 +88,13 @@ tankLable = transform.scale(tankName, (100, 50))
 tankWords = image.load('Pictures/Tank Stats.png')
 tankInfo = transform.scale(tankWords, (300, 175))
 
-backOne = image.load('Pictures/Level One Background.png')
-firstBack = transform.scale(backOne, (800, 600))
 rilfeScout = image.load('Pictures/Rifle Scout.png')
 back1 = image.load("Pictures/Level One Background.png").convert()
 back1 = transform.scale(back1, (2000, 2000))
 back2 = image.load('Pictures/Level Two Background.png').convert()
-back2 = transform.scale(back2, (2000, 2000))
+back2 = transform.scale(back2, (1024, 700))
 badguy1 = image.load("Pictures/Alien 1.png")
 badguy1 = transform.scale(badguy1, (60, 60))
-crat = image.load("Pictures/Crate 1.png")
 arrow = image.load('Pictures/arrow.png')
 rightArrow = transform.scale(arrow, (100,50))
 upArrow = transform.rotate(rightArrow, (90))
@@ -107,6 +102,54 @@ leftArrow = transform.rotate(rightArrow, (180))
 downArrow = transform.rotate(rightArrow, (270))
 hole = image.load('Pictures/hole.png')
 hole = transform.scale(hole, (50,50))
+
+ship1 = image.load('Pictures/Alien(1) Ship 1.png')
+ship2 = image.load('Pictures/Alien(1) Ship 2.png')
+ship3 = image.load('Pictures/Alien(1) Ship 3.png')
+ship4 = image.load('Pictures/Alien(2) Ship 1.png')
+ship4 = transform.scale(ship4, (225, 525))
+ship4 = transform.rotate(ship4, (75))
+ship5 = image.load('Pictures/Alien(2) Ship 2.png')
+ship5 = transform.scale(ship5, (225, 575))
+ship6 = image.load('Pictures/Alien(2) Ship 3.png')
+ship7 = image.load('Pictures/Alien(3) Ship 1.png')
+ship7 = transform.scale(ship7, (300, 450))
+ship7 = transform.rotate(ship7, (-135))
+ship8 = image.load('Pictures/Alien(3) Ship 2.png')
+ship8 = transform.scale(ship8, (225,300))
+ship9 = image.load('Pictures/Earth Ship.png')
+ship9 = transform.scale(ship9, (250, 400))
+build1 = image.load('Pictures/Building 1.png')
+build1 = transform.scale(build1, (350, 900))
+build2 = image.load('Pictures/Building 2.png')
+build2 = transform.scale(build2, (200, 550))
+build2 = transform.rotate(build2, (-45))
+build3 = image.load('Pictures/Infected Building 1.png')
+build3 = transform.scale(build3, (550, 550))
+build4 = image.load('Pictures/Infected Building 2.png')
+build4 = transform.scale(build4, (300, 150))
+build4 = transform.rotate(build4, (90))
+build5 = image.load('Pictures/Infected Building 3.png')
+build5 = transform.scale(build5, (125,100))
+crat = image.load("Pictures/Weapon Crate.png")
+crat2 = image.load('Pictures/Item Crate.png')
+crat3 = image.load('Pictures/Med Crate.png')
+grenade = image.load('Pictures/Grenade.png')
+overshield = image.load('Pictures/Overshield.png')
+sRing = image.load('Pictures/Scizor Ring.png')
+junk1 = image.load('Pictures/Junk 1.png')
+junk1 = transform.scale(junk1, (75, 150))
+junk2 = image.load('Pictures/Junk 2.png')
+junk2 = transform.scale(junk2, (75, 150))
+junk2 = transform.rotate(junk2, (180))
+junk3 = image.load('Pictures/Junk 3.png')
+junk3 = transform.scale(junk3, (100, 150))
+junk3 = transform.rotate(junk3, (90))
+junk4 = image.load('Pictures/Junk 4.png')
+junk5 = image.load('Pictures/Junk 5.png')
+junk5 = transform.rotate(junk5, (90))
+junk6 = image.load('Pictures/Junk 6.png')
+junk6 = transform.rotate(junk6, (45))
 
 
 for i in range(1, 17):
@@ -199,15 +242,17 @@ def checkKill(x, y):
         rect = enemyRect(bguy)
         if rect.collidepoint(x, y):
             badGuys.remove(bguy)
+            return True
+    return False
 
 
 def checkHit(rect):
     global bombs
-    global MarineHealth
+    global currentHealth
     global badGuys
     for bguy in badGuys:
         if rect.collidepoint(bguy[0]+35, bguy[1]+35):
-            MarineHealth -= 10
+            currentHealth -= 10
             badGuys.remove(bguy)
             bombs.append([bguy[0], bguy[1]])
             return True
@@ -225,17 +270,25 @@ def checkLoseLevel(health):
         return True
 
 
-def checkUpgrade(Wcrates, guyx, guyy):
+def checkUpgrade(Wcrates, Mcrates, guyx, guyy):
     global guy
     global crateNum
     global weapon
+    global maxHealth
+    global currentHealth
+
     for crate in Wcrates:
-
         crateRect = Rect(crate[0], crate[1], 40, 40)
-
         if crateRect.collidepoint(guyx + 15, guyy + 15):
             crateNum = crate[2]
             Wcrates.remove(crate)
+
+    for med in Mcrates:
+        medRect = Rect(med[0], med[1], 40, 40)
+        if medRect.collidepoint(guyx + 15, guyy + 15):
+            currentHealth += 20
+            Mcrates.remove(med)
+            if currentHealth > maxHealth: currentHealth = maxHealth
 
     if crateNum == 1 and Class == 'Scout': weapon = 'Sniper'
     if crateNum == 1 and Class == 'Marine': weapon = 'Plasma'
@@ -247,12 +300,12 @@ def checkUpgrade(Wcrates, guyx, guyy):
     if crateNum == 3 and Class == 'Tank': weapon = 'Melee'
 
 
-def goodHealthMeter(health):
-    healthRect = Rect(10, 10, 10+(health*2), 20)
+def goodHealthMeter(currentHealth):
+    healthRect = Rect(10, 10, 10+(currentHealth*2), 20)
     return healthRect
 
 
-def drawScene(badGuys,arrows,back):
+def drawScene(badGuys, arrows, back, builds):
     screen.blit(back, (0, 0))
     guy = image.load('Pictures/' + weapon + ' ' + Class + '.png')
     pic = transform.scale(guy, (50, 50))
@@ -265,9 +318,14 @@ def drawScene(badGuys,arrows,back):
     shoot2 = transform.scale(shoot2, (7, 7))
 
     for crate in Wcrates:
-        weaponcrate = transform.scale(crat, (40, 40))
+        weaponcrate = transform.scale(crat, (40,60))
         screen.blit(weaponcrate, (crate[0], crate[1]))
-        checkUpgrade(Wcrates, guyx, guyy)
+        checkUpgrade(Wcrates, Mcrates, guyx, guyy)
+
+    for med in Mcrates:
+        medcrate = transform.scale(crat3, (40, 60))
+        screen.blit(medcrate, (med[0], med[1]))
+        checkUpgrade(Wcrates, Mcrates, guyx, guyy)
 
     for shot in shots[:]:
         screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
@@ -283,9 +341,12 @@ def drawScene(badGuys,arrows,back):
         screen.blit(alien1, bguy[:2])
         eRect = enemyRect(bguy)
 
+    for b in builds:
+        screen.blit(b[0], (b[1], b[2]))
+
     grect = guyRect(guyx, guyy)
     checkHit(grect)
-    healthRect = goodHealthMeter(MarineHealth)
+    healthRect = goodHealthMeter(currentHealth)
     draw.rect(screen, (0, 255, 0), healthRect)
 
     win = checkWinLevel(badGuys)
@@ -302,7 +363,7 @@ def drawScene(badGuys,arrows,back):
             if arrow == hole:
                 screen.blit(hole, (487, 325))
 
-    lose = checkLoseLevel(MarineHealth)
+    lose = checkLoseLevel(currentHealth)
     if lose:
         screen.fill((0, 0, 0))
     display.flip()
@@ -426,6 +487,8 @@ def classSelect():
     classSelectRunning = True
     global Class
     global weapon
+    global maxHealth
+    global currentHealth
 
     while classSelectRunning:
         for evnt in event.get():
@@ -454,6 +517,8 @@ def classSelect():
         if scoutRect.collidepoint(mx, my) and mb[0] == 1:
             Class = 'Scout'
             weapon = 'Rifle'
+            maxHealth = 40
+            currentHealth = 40
         if Class == 'Scout':
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, scoutRect, 2)
@@ -466,6 +531,8 @@ def classSelect():
         if marineRect.collidepoint(mx, my) and mb[0] == 1:
             Class = 'Marine'
             weapon = 'Rifle'
+            maxHealth = 70
+            currentHealth = 70
         if Class == 'Marine':
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, marineRect, 2)
@@ -478,6 +545,8 @@ def classSelect():
         if tankRect.collidepoint(mx, my) and mb[0] == 1:
             Class = 'Tank'
             weapon = 'Pistol'
+            maxHealth = 100
+            currentHealth = 100
         if Class == 'Tank':
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, tankRect, 2)
@@ -532,15 +601,17 @@ def room_1():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_1Running = True
-    badGuys=[[100,700,0],[10,500,0]]
+    badGuys=[[512,350,0],[522,360,0]]
     Wcrates=[]
     arrows = [up]
+    builds = [[ship9, 50, 300]]
+    Mcrates = []
 
     while room_1Running:
-        print(round(myClock.get_fps()))
         for evnt in event.get():
             if evnt.type == QUIT:
                 running = False
@@ -560,7 +631,7 @@ def room_1():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows,back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -572,6 +643,7 @@ def room_1():
                 guyx = 512
                 guyy = 660
                 return 'room_2'
+    return 'menu'
 
 
 def room_2():
@@ -581,12 +653,15 @@ def room_2():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_2Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up,right,left,down]
+    builds = [[build2, 100, 100]]
+    Mcrates = []
 
     while room_2Running:
         for evnt in event.get():
@@ -608,7 +683,7 @@ def room_2():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -641,12 +716,15 @@ def room_3():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_3Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up, right]
+    builds = [[ship8, 650, 50]]
+    Mcrates = [[150,550]]
 
     while room_3Running:
         for evnt in event.get():
@@ -668,7 +746,7 @@ def room_3():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -693,12 +771,15 @@ def room_4():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_4Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[[100,600,1]]
     arrows = [up, left]
+    builds = [[junk1, 175, 145], [junk2, 550, 480], [junk3, 750, 200]]
+    Mcrates = []
 
     while room_4Running:
         for evnt in event.get():
@@ -720,7 +801,7 @@ def room_4():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -745,12 +826,15 @@ def room_5():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_5Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up, right, down]
+    builds = [[junk4, 150, 100], [junk5, 275, 500], [junk6, 600, 150]]
+    Mcrates = []
 
     while room_5Running:
         for evnt in event.get():
@@ -772,7 +856,7 @@ def room_5():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -801,12 +885,15 @@ def room_6():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_6Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up,right,left,down]
+    builds = [[ship7, 200, 150]]
+    Mcrates = [[850,150]]
 
     while room_6Running:
         for evnt in event.get():
@@ -828,7 +915,7 @@ def room_6():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -861,12 +948,15 @@ def room_7():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_7Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up,left,down]
+    builds = [[ship4, 300, 150]]
+    Mcrates = []
 
     while room_7Running:
         for evnt in event.get():
@@ -888,7 +978,7 @@ def room_7():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -917,12 +1007,15 @@ def room_8():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_8Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[[100,600,2]]
     arrows = [up,right,down]
+    builds = [[junk3, 200, 225], [ship5, 650, 50]]
+    Mcrates = []
 
     while room_8Running:
         for evnt in event.get():
@@ -944,7 +1037,7 @@ def room_8():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -973,12 +1066,15 @@ def room_9():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_9Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up,right,left,down]
+    builds = [[build3, 250, 75]]
+    Mcrates = []
 
     while room_9Running:
         for evnt in event.get():
@@ -1000,7 +1096,7 @@ def room_9():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1033,12 +1129,15 @@ def room_10():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_10Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up,left,down]
+    builds = [[build5, 125, 150], [build5, 175, 400], [build5, 420, 250], [build5, 600, 180], [build5, 620, 500]]
+    Mcrates = []
 
     while room_10Running:
         for evnt in event.get():
@@ -1060,7 +1159,7 @@ def room_10():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1089,12 +1188,15 @@ def room_11():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_11Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
-    arrows = [down,hole]
+    arrows = [down, hole]
+    builds = [[build4, 200, 150], [build4, 650, 200]]
+    Mcrates = []
 
     while room_11Running:
         for evnt in event.get():
@@ -1116,7 +1218,7 @@ def room_11():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1141,12 +1243,15 @@ def room_12():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_12Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [down]
+    builds = [[build5, 200, 300], [build1, 825, -75]]
+    Mcrates = [[550, 200]]
 
     while room_12Running:
         for evnt in event.get():
@@ -1168,7 +1273,7 @@ def room_12():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1189,12 +1294,15 @@ def room_13():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_13Running = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
-    Wcrates=[[100,600,3]]
+    Wcrates=[[900,100,3]]
     arrows = [down]
+    builds = [[build5, 400, 275], [ship6, -250, -50]]
+    Mcrates = []
 
     while room_13Running:
         for evnt in event.get():
@@ -1216,7 +1324,7 @@ def room_13():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back1)
+        drawScene(badGuys, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1237,12 +1345,15 @@ def room_1B():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_1BRunning = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up]
+    builds = []
+    Mcrates = []
 
     while room_1BRunning:
         for evnt in event.get():
@@ -1264,7 +1375,7 @@ def room_1B():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back2)
+        drawScene(badGuys, arrows, back2, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1285,12 +1396,15 @@ def room_2B():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_2BRunning = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [up]
+    builds = []
+    Mcrates = []
 
     while room_2BRunning:
         for evnt in event.get():
@@ -1312,7 +1426,7 @@ def room_2B():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back2)
+        drawScene(badGuys, arrows, back2, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1337,12 +1451,15 @@ def room_3B():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_3BRunning = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = []
+    builds = []
+    Mcrates = []
 
     while room_3BRunning:
         for evnt in event.get():
@@ -1364,7 +1481,7 @@ def room_3B():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back2)
+        drawScene(badGuys, arrows, back2, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1382,12 +1499,15 @@ def room_4B():
     global weapon
     global badGuys
     global Wcrates
+    global Mcrates
     global guyx
     global guyy
     room_4BRunning = True
     badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
     Wcrates=[]
     arrows = [left]
+    builds = []
+    Mcrates = []
 
     while room_4BRunning:
         for evnt in event.get():
@@ -1409,7 +1529,7 @@ def room_4B():
 
         gunHeat -= 1
         moveShots(shots)
-        drawScene(badGuys, arrows, back2)
+        drawScene(badGuys, arrows, back2, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
         display.flip()
@@ -1423,7 +1543,7 @@ def room_4B():
     return 'title'
 
 
-page = 'room_1'
+page = 'room_1B'
 while page != 'exit':
     if page == 'title':
         page = title()
