@@ -27,6 +27,8 @@ item = 'none'
 currentHealth = 40
 maxHealth = 40
 lastRoom = 'room_1'
+Heat = 20
+damage = 1
 guy = image.load('Pictures/'+weapon+' '+Class+'.png')
 shots = []
 gunAng = 0.0
@@ -179,7 +181,7 @@ junk6 = transform.rotate(junk6, (45))
 
 
 for i in range(1, 17):
-    bombPics.append(image.load("explosion/explosion"+str(i)+".png"))
+    bombPics+=[(image.load("explosion/explosion"+str(i)+".png"))]
 
 
 def distance(x1, y1, x2, y2):
@@ -261,8 +263,27 @@ def moveShots(shots):
         shot[Y] += shot[VY]
         if shot[X] > guyx+400 or guyx-400 > shot[X] or guyy-400 > shot[Y] or shot[Y] > guyy+400:
             killlist.append(shot)
+        for bguy in badGuys[:]:
+            eRect=enemyRect(bguy)
+            if eRect.collidepoint(shot[X], shot[Y]):
+                bguy[3]-=damage
+                killlist.append(shot)
+                if bguy[3]<=0:
+                    badGuys.remove(bguy)
     for s in killlist:
         shots.remove(s)
+
+
+def boomBombs(bombs):
+    rem=[]
+    for bomb in bombs:
+        bomb[2]+=1
+        if bomb[2]>90 and bomb[2]%5==0:
+            bomb[3]+=1
+            if bomb[3]==16:
+                rem.append(bomb)
+    for bomb in rem:
+        bombs.remove(bomb)
 
 
 def enemyRect(bguy):
@@ -270,17 +291,20 @@ def enemyRect(bguy):
     return eRect
 
 
-def checkKill(x, y):
+'''def checkKill(x, y):
+    global badGuys
     for bguy in badGuys[:]:
         rect = enemyRect(bguy)
         if rect.collidepoint(x, y):
-            badGuys.remove(bguy)
+            bguy[3]-=1
+            if bguy[3]<=0:
+                badGuys.remove(bguy)
     for bguy in badGuys2[:]:
         rect = enemyRect(bguy)
         if rect.collidepoint(x,y):
             badGuys2.remove(bguy)
             return True
-    return False
+    return False'''
 
 
 def checkHit(rect):
@@ -303,7 +327,7 @@ def checkHit(rect):
 
 
 def checkWinLevel(badGuys):
-    if len(badGuys) == 0:
+    if len(badGuys) == 0 and len(badGuys2)==0:
         return True
     return False
 
@@ -319,6 +343,8 @@ def checkUpgrade(Wcrates, Mcrates, guyx, guyy):
     global weapon
     global maxHealth
     global currentHealth
+    global Heat
+    global damage
 
     for crate in Wcrates:
         crateRect = Rect(crate[0], crate[1], 40, 40)
@@ -333,14 +359,38 @@ def checkUpgrade(Wcrates, Mcrates, guyx, guyy):
             Mcrates.remove(med)
             if currentHealth > maxHealth: currentHealth = maxHealth
 
-    if crateNum == 1 and Class == 'Scout': weapon = 'Sniper'
-    if crateNum == 1 and Class == 'Marine': weapon = 'Plasma'
-    if crateNum == 1 and Class == 'Tank': weapon = 'Shotgun'
-    if crateNum == 2 and Class == 'Scout': weapon = 'Cannon'
-    if crateNum == 2 and Class == 'Marine': weapon = 'Sniper'
-    if crateNum == 2 and Class == 'Tank': weapon = 'Minigun'
-    if crateNum == 3 and Class == 'Marine': weapon = 'Machine'
-    if crateNum == 3 and Class == 'Tank': weapon = 'Melee'
+    if crateNum == 1 and Class == 'Scout':
+        Heat = 30
+        damage = 3
+        weapon = 'Sniper'
+    if crateNum == 1 and Class == 'Marine':
+        Heat = 20
+        damage = 3
+        weapon = 'Plasma'
+    if crateNum == 1 and Class == 'Tank':
+        Heat = 30
+        damage = 1
+        weapon = 'Shotgun'
+    if crateNum == 2 and Class == 'Scout':
+        Heat = 20
+        damage = 2
+        weapon = 'Cannon'
+    if crateNum == 2 and Class == 'Marine':
+        Heat = 30
+        damage = 3
+        weapon = 'Sniper'
+    if crateNum == 2 and Class == 'Tank':
+        Heat = 5
+        damage = 1
+        weapon = 'Minigun'
+    if crateNum == 3 and Class == 'Marine':
+        Heat = 10
+        damage = 2
+        weapon = 'Machine'
+    if crateNum == 3 and Class == 'Tank':
+        Heat = 10
+        damage = 1
+        weapon = 'Melee'
 
 
 def goodHealthMeter(currentHealth):
@@ -373,16 +423,19 @@ def drawScene(badGuys, badGuys2, arrows, back, builds):
     for shot in shots[:]:
         screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
         # draw.circle(screen,(30,30,255),(int(shot[X]),int(shot[Y])),3)
-        used = checkKill(shot[X], shot[Y])
+        #used = checkKill(shot[X], shot[Y])
 
-        if used:
-            shots.remove(shot)
+       # if used:
+       #     shots.remove(shot)
 
     for bguy in badGuys:
         moveBadGuys1(bguy, guyx, guyy)
         alien1 = transform.rotate(badguy1, bguy[2])
         screen.blit(alien1, bguy[:2])
         eRect = enemyRect(bguy)
+
+    for bomb in bombs:
+        screen.blit(bombPics[bomb[3]], (bomb[X],bomb[Y]))
 
     for bguy in badGuys2:
         moveBadGuys2(bguy, guyx, guyy)
@@ -425,7 +478,6 @@ def fadeIn():
         image.set_alpha(255-i)
         screen.blit(image, (0, 0))
         display.flip()
-        time.delay(2)
 
 def title():
     global running
@@ -704,7 +756,7 @@ def room_1():
     global lastRoom
     room_1Running = True
     lastRoom = 'room_1'
-    badGuys=[[100,100,0]]
+    badGuys=[[100,100,0,2]]
     Wcrates=[]
     arrows = [up]
     builds = [[ship9, 50, 300]]
@@ -725,7 +777,7 @@ def room_1():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -757,7 +809,7 @@ def room_2():
     global lastRoom
     room_2Running = True
     lastRoom = 'room_2'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up,right,left,down]
     builds = [[build2, 100, 100]]
@@ -778,7 +830,7 @@ def room_2():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -823,7 +875,7 @@ def room_3():
     global lastRoom
     room_3Running = True
     lastRoom = 'room_3'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up, right]
     builds = [[ship8, 650, 50]]
@@ -844,7 +896,7 @@ def room_3():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -881,7 +933,7 @@ def room_4():
     global lastRoom
     room_4Running = True
     lastRoom = 'room_4'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[[100,600,1]]
     arrows = [up, left]
     builds = [[junk1, 175, 145], [junk2, 550, 480], [junk3, 750, 200]]
@@ -902,7 +954,7 @@ def room_4():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -939,7 +991,7 @@ def room_5():
     global lastRoom
     room_5Running = True
     lastRoom = 'room_5'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up, right, down]
     builds = [[junk4, 150, 100], [junk5, 275, 500], [junk6, 600, 150]]
@@ -960,7 +1012,7 @@ def room_5():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1001,7 +1053,7 @@ def room_6():
     global lastRoom
     room_6Running = True
     lastRoom = 'room_6'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up,right,left,down]
     builds = [[ship7, 200, 150]]
@@ -1022,7 +1074,7 @@ def room_6():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1067,7 +1119,7 @@ def room_7():
     global lastRoom
     room_7Running = True
     lastRoom = 'room_7'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up,left,down]
     builds = [[ship4, 300, 150]]
@@ -1088,7 +1140,7 @@ def room_7():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1129,7 +1181,7 @@ def room_8():
     global lastRoom
     room_8Running = True
     lastRoom = 'room_8'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[[100,600,2]]
     arrows = [up,right,down]
     builds = [[junk3, 200, 225], [ship5, 650, 50]]
@@ -1150,7 +1202,7 @@ def room_8():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1191,7 +1243,7 @@ def room_9():
     global lastRoom
     room_9Running = True
     lastRoom = 'room_9'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up,right,left,down]
     builds = [[build3, 250, 75]]
@@ -1212,7 +1264,7 @@ def room_9():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1257,7 +1309,7 @@ def room_10():
     global lastRoom
     room_10Running = True
     lastRoom = 'room_10'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up,left,down]
     builds = [[build5, 125, 150], [build5, 175, 400], [build5, 420, 250], [build5, 600, 180], [build5, 620, 500]]
@@ -1278,11 +1330,12 @@ def room_10():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
         moveShots(shots)
+        boomBombs(bombs)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1319,7 +1372,7 @@ def room_11():
     global lastRoom
     room_11Running = True
     lastRoom = 'room_11'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [down, hole]
     builds = [[build4, 200, 150], [build4, 650, 200]]
@@ -1340,7 +1393,7 @@ def room_11():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1377,7 +1430,7 @@ def room_12():
     global lastRoom
     room_12Running = True
     lastRoom = 'room_12'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [down]
     builds = [[build5, 200, 300], [build1, 825, -75]]
@@ -1398,7 +1451,7 @@ def room_12():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1431,7 +1484,7 @@ def room_13():
     global lastRoom
     room_13Running = True
     lastRoom = 'room_13'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[[900,100,3]]
     arrows = [down]
     builds = [[build5, 400, 275], [ship6, -250, -50]]
@@ -1452,7 +1505,7 @@ def room_13():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1486,7 +1539,7 @@ def room_1B():
     global lastRoom
     room_1BRunning = True
     lastRoom = 'room_1B'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2=[[100,100,0],[500,400,0]]
     Wcrates=[]
     arrows = [up]
@@ -1508,7 +1561,7 @@ def room_1B():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1541,7 +1594,7 @@ def room_2B():
     global lastRoom
     room_2BRunning = True
     lastRoom = 'room_2B'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up]
     builds = []
@@ -1562,7 +1615,7 @@ def room_2B():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1599,7 +1652,7 @@ def room_3B():
     global lastRoom
     room_3BRunning = True
     lastRoom = 'room_3B'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = []
     builds = []
@@ -1620,7 +1673,7 @@ def room_3B():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1650,7 +1703,7 @@ def room_4B():
     global lastRoom
     room_4BRunning = True
     lastRoom = 'room_4B'
-    badGuys=[[100,700,0],[10,500,0],[200,400,0],[500,450,0]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [left]
     builds = []
@@ -1671,7 +1724,7 @@ def room_4B():
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = 15
+            gunHeat = Heat
             shots.append(addShot(-angle - 90, power))
 
         gunHeat -= 1
@@ -1690,7 +1743,7 @@ def room_4B():
     return 'title'
 
 
-page = 'room_11'
+page = 'room_10'
 while page != 'exit':
     if page == 'title':
         page = title()
