@@ -9,6 +9,8 @@ running = True
 pos = ''
 guyx = 290
 guyy = 420
+lastx = 310
+lasty = 420
 SPACE = 32
 X = 0
 Y = 1
@@ -27,7 +29,6 @@ weapon = 'Rifle'
 item = 'none'
 currentHealth = 40
 maxHealth = 40
-lastRoom = 'room_1'
 Heat = 20
 damage = 1
 guy = image.load('Pictures/'+weapon+' '+Class+'.png')
@@ -98,8 +99,6 @@ tankLable = transform.scale(tankName, (100, 50))
 tankWords = image.load('Pictures/Tank Stats.png')
 tankInfo = transform.scale(tankWords, (300, 175))
 
-next = image.load('Pictures/Next.png')
-next = transform.scale(next, (125, 100))
 back = image.load('Pictures/Back.png')
 back = transform.scale(back, (150, 75))
 story = image.load('Pictures/Story.png')
@@ -129,6 +128,7 @@ badguy2 = image.load('Pictures/Alien 2.png')
 badguy2 = transform.scale(badguy2,(70,60))
 badguy3 = image.load('Pictures/Alien 3.png')
 badguy3 = transform.scale(badguy3, (80,80))
+boss = image.load('Pictures/Boss Alien.png')
 arrow = image.load('Pictures/arrow.png')
 rightArrow = transform.scale(arrow, (100,50))
 upArrow = transform.rotate(rightArrow, (90))
@@ -137,12 +137,8 @@ downArrow = transform.rotate(rightArrow, (270))
 hole = image.load('Pictures/hole.png')
 hole = transform.scale(hole, (50,50))
 
-ship1 = image.load('Pictures/Alien(1) Ship 1.png')
-ship2 = image.load('Pictures/Alien(1) Ship 2.png')
-ship3 = image.load('Pictures/Alien(1) Ship 3.png')
 ship4 = image.load('Pictures/Alien(2) Ship 1.png')
 ship4 = transform.scale(ship4, (225, 525))
-ship4 = transform.rotate(ship4, (75))
 ship5 = image.load('Pictures/Alien(2) Ship 2.png')
 ship5 = transform.scale(ship5, (225, 575))
 ship6 = image.load('Pictures/Alien(2) Ship 3.png')
@@ -157,20 +153,15 @@ build1 = image.load('Pictures/Building 1.png')
 build1 = transform.scale(build1, (350, 900))
 build2 = image.load('Pictures/Building 2.png')
 build2 = transform.scale(build2, (200, 550))
-build2 = transform.rotate(build2, (-45))
 build3 = image.load('Pictures/Infected Building 1.png')
-build3 = transform.scale(build3, (550, 550))
+build3 = transform.scale(build3, (480, 480))
 build4 = image.load('Pictures/Infected Building 2.png')
 build4 = transform.scale(build4, (300, 150))
 build4 = transform.rotate(build4, (90))
 build5 = image.load('Pictures/Infected Building 3.png')
 build5 = transform.scale(build5, (125,100))
 crat = image.load("Pictures/Weapon Crate.png")
-crat2 = image.load('Pictures/Item Crate.png')
 crat3 = image.load('Pictures/Med Crate.png')
-grenade = image.load('Pictures/Grenade.png')
-overshield = image.load('Pictures/Overshield.png')
-sRing = image.load('Pictures/Scizor Ring.png')
 junk1 = image.load('Pictures/Junk 1.png')
 junk1 = transform.scale(junk1, (75, 150))
 junk2 = image.load('Pictures/Junk 2.png')
@@ -183,7 +174,6 @@ junk4 = image.load('Pictures/Junk 4.png')
 junk5 = image.load('Pictures/Junk 5.png')
 junk5 = transform.rotate(junk5, (90))
 junk6 = image.load('Pictures/Junk 6.png')
-junk6 = transform.rotate(junk6, (45))
 
 
 for i in range(1, 17):
@@ -199,12 +189,16 @@ def moveGuy(x, y):
     global guyy
     keys = key.get_pressed()
     if keys[ord("a")]:
+        lastx = guyx
         guyx -= 5
     if keys[ord("d")]:
+        lastx = guyx
         guyx += 5
     if keys[ord("w")]:
+        lasty = guyy
         guyy -= 5
     if keys[ord("s")]:
+        lasty = guyy
         guyy += 5
     if guyx < 0: guyx = 0
     if guyx > 1024 - 35: guyx = 1024 - 35
@@ -610,6 +604,10 @@ def gameLoad():
 
 def load():
     global running
+    global Class
+    global weapon
+    global maxHealth
+    global currentHealth
     loadRunning = True
     backRect = Rect(0, 555, 150, 75)
     save1 = Rect(435, 483, 160, 50)
@@ -634,10 +632,44 @@ def load():
         if len(myFiles) == 3:
             screen.blit(campaignButton, (415, 620))
         if save1.collidepoint(mx, my) and mb[0] == 1:
-            saveFile = open('Save 1.txt', 'r')
-            save = saveFile.readlines()
-            saveFile.close()
-            print(save)
+            saveFile = open(myFiles[0], 'r')
+            save = saveFile.read().split()
+            Class = save[0]
+            if save[0] == 'Scout':
+                maxHealth = 40
+            if save[0] == 'Marine':
+                maxHealth = 70
+            if save[0] == 'Tank':
+                maxHealth = 100
+            weapon = save[1]
+            currentHealth = int(save[2])
+            return save[3]
+        if save2.collidepoint(mx, my) and mb[0] == 1:
+            saveFile = open(myFiles[1], 'r')
+            save = saveFile.read().split()
+            Class = save[0]
+            if save[0] == 'Scout':
+                maxHealth = 40
+            if save[0] == 'Marine':
+                maxHealth = 70
+            if save[0] == 'Tank':
+                maxHealth = 100
+            weapon = save[1]
+            currentHealth = int(save[2])
+            return save[3]
+        if save3.collidepoint(mx, my) and mb[0] == 1:
+            saveFile = open(myFiles[2], 'r')
+            save = saveFile.read().split()
+            Class = save[0]
+            if save[0] == 'Scout':
+                maxHealth = 40
+            if save[0] == 'Marine':
+                maxHealth = 70
+            if save[0] == 'Tank':
+                maxHealth = 100
+            weapon = save[1]
+            currentHealth = int(save[2])
+            return save[3]
         if backRect.collidepoint(mx, my) and mb[0] == 1:
             return 'gameLoad'
         display.flip()
@@ -795,7 +827,6 @@ def instructions():
 
 def pause():
     global running
-    global lastRoom
     pauseRunning = True
     resumeRect = Rect(425, 225, 175, 50)
     saveQuitRect = Rect(375, 325, 275, 50)
@@ -818,11 +849,38 @@ def pause():
         screen.blit(quitButton, (462, 425))
         display.flip()
         if resumeRect.collidepoint(mx, my) and mb[0] == 1:
-            return lastRoom
+            pauseRunning = False
         if saveQuitRect.collidepoint(mx, my) and mb[0] == 1:
             return 'menu'
         if quitRect.collidepoint(mx, my) and mb[0] == 1:
             return 'menu'
+
+
+def blockMove(image):
+    global lastx
+    global lasty
+    global guyx
+    global guyy
+    keys = key.get_pressed()
+    grect = guyRect(guyx, guyy)
+    for i in image:
+        if grect.colliderect(i[0]):
+            if keys[ord("a")]:
+                if guyx < int(i[3]) and guyx > int(i[1]) and guyy > int(i[2]) and guyy < int(i[4]):
+                    guyx = lastx
+                    guyy = lasty
+            if keys[ord("d")]:
+                if guyx > int(i[1]) and guyx < int(i[3]) and guyy > int(i[2]) and guyy < int(i[4]):
+                    guyx = lastx
+                    guyy = lasty
+            if keys[ord("w")]:
+                if guyy < int(i[4]) and guyy > int(i[2]) and guyx > int(i[1]) and guyx < int(i[3]):
+                    guyx = lastx
+                    guyy = lasty
+            if keys[ord("s")]:
+                if guyy > int(i[2]) and guyy < int(i[4]) and guyx > int(i[1]) and guyx < int(i[3]):
+                    guyx = lastx
+                    guyy = lasty
 
 
 def room_1():
@@ -837,18 +895,17 @@ def room_1():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     room_1Running = True
-    lastRoom = 'room_1'
     badGuys=[[100,100,0,2]]
     badGuys3=[[400,300,0,3],[100,600,0,3]]
     Wcrates=[]
     arrows = [up]
     builds = [[ship9, 50, 300]]
     Mcrates = []
+
     while room_1Running:
         for evnt in event.get():
             if evnt.type == QUIT:
@@ -856,7 +913,9 @@ def room_1():
                 room_1Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -881,6 +940,7 @@ def room_1():
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
+        blockMove([[Rect(50, 300, 250, 400), 50, 300, 300, 700]])
         display.flip()
         win = checkWinLevel(badGuys)
         if win:
@@ -902,14 +962,12 @@ def room_2():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     global badguys3
     shots = []
     shotgunList = []
     room_2Running = True
-    lastRoom = 'room_2'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up,right,left,down]
@@ -923,7 +981,9 @@ def room_2():
                 room_2Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -949,6 +1009,7 @@ def room_2():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(210, 80, 400, 650), 210, 80, 400, 650]])
         myClock.tick(60)
         display.flip()
 
@@ -984,13 +1045,11 @@ def room_3():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_3Running = True
-    lastRoom = 'room_3'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up, right]
@@ -1004,7 +1063,9 @@ def room_3():
                 room_3Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return 'pause'
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1029,6 +1090,7 @@ def room_3():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(650, 50, 875, 350), 650, 50, 875, 350]])
         myClock.tick(60)
         display.flip()
 
@@ -1056,13 +1118,11 @@ def room_4():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_4Running = True
-    lastRoom = 'room_4'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[[100,600,1]]
     arrows = [up, left]
@@ -1076,7 +1136,9 @@ def room_4():
                 room_4Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1101,6 +1163,9 @@ def room_4():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(175, 145, 250, 295), 175, 145, 250, 295],
+                   [Rect(530, 440, 620, 630), 530, 440, 620, 630],
+                   [Rect(720, 180, 900, 285), 720, 180, 900, 285]])
         myClock.tick(60)
         display.flip()
 
@@ -1128,13 +1193,11 @@ def room_5():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_5Running = True
-    lastRoom = 'room_5'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up, right, down]
@@ -1148,7 +1211,9 @@ def room_5():
                 room_5Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1173,6 +1238,9 @@ def room_5():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(135, 80, 250, 365), 135, 80, 250, 365],
+                   [Rect(250, 480, 470, 610), 250, 480, 470, 610],
+                   [Rect(580, 130, 680, 325), 580, 130, 680, 325]])
         myClock.tick(60)
         display.flip()
 
@@ -1204,13 +1272,11 @@ def room_6():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_6Running = True
-    lastRoom = 'room_6'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up,right,left,down]
@@ -1224,7 +1290,9 @@ def room_6():
                 room_6Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1249,6 +1317,9 @@ def room_6():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(285, 130, 420, 370), 285, 130, 420, 370],
+                   [Rect(290, 350, 490, 600), 290, 350, 490, 600],
+                   [Rect(190, 280, 300, 600), 190, 280, 300, 600]])
         myClock.tick(60)
         display.flip()
 
@@ -1284,14 +1355,12 @@ def room_7():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global badGuys2
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_7Running = True
-    lastRoom = 'room_7'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2=[[200,400,0],[500,100,0],[400,600,0]]
     Wcrates=[]
@@ -1306,7 +1375,9 @@ def room_7():
                 room_7Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1331,6 +1402,7 @@ def room_7():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(250, 175, 450, 675), 250, 175, 450, 675]])
         myClock.tick(60)
         display.flip()
 
@@ -1362,13 +1434,11 @@ def room_8():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_8Running = True
-    lastRoom = 'room_8'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[[100,600,2]]
     arrows = [up,right,down]
@@ -1382,7 +1452,9 @@ def room_8():
                 room_8Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1407,6 +1479,8 @@ def room_8():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(180, 210, 360, 310), 180, 210, 360, 310],
+                   [Rect(650, 100, 845, 625), 650, 100, 845, 625]])
         myClock.tick(60)
         display.flip()
 
@@ -1438,13 +1512,11 @@ def room_9():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_9Running = True
-    lastRoom = 'room_9'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up,right,left,down]
@@ -1458,7 +1530,9 @@ def room_9():
                 room_9Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1483,6 +1557,7 @@ def room_9():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(280, 115, 730, 570), 280, 115, 730, 570]])
         myClock.tick(60)
         display.flip()
 
@@ -1518,13 +1593,11 @@ def room_10():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_10Running = True
-    lastRoom = 'room_10'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up,left,down]
@@ -1538,7 +1611,9 @@ def room_10():
                 room_10Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1564,6 +1639,11 @@ def room_10():
         boomBombs(bombs)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(110, 140, 250, 240), 110, 140, 250, 240],
+                   [Rect(160, 390, 300, 490), 160, 390, 300, 490],
+                   [Rect(405, 240, 545, 340), 405, 240, 545, 340],
+                   [Rect(585, 170, 700, 270), 585, 170, 700, 270],
+                   [Rect(605, 490, 745, 590), 605, 490, 745, 590]])
         myClock.tick(60)
         display.flip()
 
@@ -1595,13 +1675,11 @@ def room_11():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_11Running = True
-    lastRoom = 'room_11'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [down, hole]
@@ -1615,7 +1693,9 @@ def room_11():
                 room_11Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1640,6 +1720,8 @@ def room_11():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(190, 135, 340, 440), 190, 135, 340, 440],
+                   [Rect(640, 185, 780, 490), 640, 185, 780, 490]])
         myClock.tick(60)
         display.flip()
 
@@ -1667,13 +1749,11 @@ def room_12():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_12Running = True
-    lastRoom = 'room_12'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [down]
@@ -1687,7 +1767,9 @@ def room_12():
                 room_12Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1712,6 +1794,8 @@ def room_12():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(185, 290, 325, 390), 185, 290, 325, 390],
+                   [Rect(800, -50, 1024, 900), 800, -50, 1024, 900]])
         myClock.tick(60)
         display.flip()
 
@@ -1735,13 +1819,11 @@ def room_13():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_13Running = True
-    lastRoom = 'room_13'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[[900,100,3]]
     arrows = [down]
@@ -1755,7 +1837,9 @@ def room_13():
                 room_13Running = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1780,6 +1864,8 @@ def room_13():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(385, 265, 525, 365), 385, 265, 525, 365],
+                   [Rect(0, -50, 200, 900), 0, -50, 200, 900]])
         myClock.tick(60)
         display.flip()
 
@@ -1804,13 +1890,11 @@ def room_1B():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_1BRunning = True
-    lastRoom = 'room_1B'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2=[[100,100,0],[500,400,0]]
     Wcrates=[]
@@ -1825,7 +1909,9 @@ def room_1B():
                 room_1BRunning = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1850,6 +1936,8 @@ def room_1B():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(0, -50, 200, 900), 0, -50, 200, 900],
+                   [Rect(800, -50, 1024, 900), 800, -50, 1024, 900]])
         myClock.tick(60)
         display.flip()
 
@@ -1873,13 +1961,11 @@ def room_2B():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_2BRunning = True
-    lastRoom = 'room_2B'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [up]
@@ -1893,7 +1979,9 @@ def room_2B():
                 room_2BRunning = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1918,6 +2006,8 @@ def room_2B():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(0, -50, 200, 900), 0, -50, 200, 900],
+                   [Rect(800, -50, 1024, 900), 800, -50, 1024, 900]])
         myClock.tick(60)
         display.flip()
 
@@ -1945,13 +2035,11 @@ def room_3B():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_3BRunning = True
-    lastRoom = 'room_3B'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = []
@@ -1965,7 +2053,9 @@ def room_3B():
                 room_3BRunning = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -1990,6 +2080,8 @@ def room_3B():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(0, -50, 200, 900), 0, -50, 200, 900],
+                   [Rect(800, -50, 1024, 900), 800, -50, 1024, 900]])
         myClock.tick(60)
         display.flip()
 
@@ -2010,13 +2102,11 @@ def room_4B():
     global Mcrates
     global guyx
     global guyy
-    global lastRoom
     global shots
     global shotgunList
     shots = []
     shotgunList = []
     room_4BRunning = True
-    lastRoom = 'room_4B'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [left]
@@ -2030,7 +2120,9 @@ def room_4B():
                 room_4BRunning = False
             if evnt.type == KEYDOWN:
                 if evnt.key == K_p:
-                    return pause()
+                    a = pause()
+                    if a != None:
+                        return a
 
         keys = key.get_pressed()
         if keys[27]:
@@ -2055,6 +2147,8 @@ def room_4B():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
+        blockMove([[Rect(0, -50, 200, 900), 0, -50, 200, 900],
+                   [Rect(800, -50, 1024, 900), 800, -50, 1024, 900]])
         myClock.tick(60)
         display.flip()
 
