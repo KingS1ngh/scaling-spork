@@ -844,7 +844,7 @@ def room_1():
     room_1Running = True
     lastRoom = 'room_1'
     badGuys=[[100,100,0,2]]
-    badGuys3=[[400,300,0,3]]
+    badGuys3=[[400,300,0,3],[100,600,0,3]]
     Wcrates=[]
     arrows = [up]
     builds = [[ship9, 50, 300]]
@@ -905,6 +905,7 @@ def room_2():
     global lastRoom
     global shots
     global shotgunList
+    global badguys3
     shots = []
     shotgunList = []
     room_2Running = True
@@ -939,7 +940,7 @@ def room_2():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
 
         gunHeat -= 1
@@ -1020,7 +1021,7 @@ def room_3():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1092,7 +1093,7 @@ def room_4():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1164,7 +1165,7 @@ def room_5():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1240,7 +1241,7 @@ def room_6():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1322,7 +1323,7 @@ def room_7():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1398,7 +1399,7 @@ def room_8():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1474,7 +1475,7 @@ def room_9():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1554,7 +1555,7 @@ def room_10():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1631,7 +1632,7 @@ def room_11():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1703,7 +1704,7 @@ def room_12():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1771,7 +1772,7 @@ def room_13():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1841,7 +1842,7 @@ def room_1B():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1909,7 +1910,7 @@ def room_2B():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1981,7 +1982,7 @@ def room_3B():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -2046,7 +2047,7 @@ def room_4B():
             ang = moveBadGuys3(bguy, guyx, guyy)
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-                moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
         boomBombs(bombs)
