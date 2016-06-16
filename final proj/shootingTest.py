@@ -7,7 +7,7 @@ screen = display.set_mode((1024, 700))
 myClock = time.Clock()
 running = True
 pos = ''
-guyx = 290
+guyx = 300
 guyy = 420
 lastx = 310
 lasty = 420
@@ -58,122 +58,121 @@ holeRect = Rect(487, 325, 50, 50)
 titleScreen = image.load('Pictures/Title Screen.png').convert()
 titleBack = transform.scale(titleScreen, (1035, 800))
 
-campaignButtonPic = image.load('Pictures/Campaign.png')
+campaignButtonPic = image.load('Pictures/Campaign.png').convert_alpha()
 campaignButton = transform.scale(campaignButtonPic, (200, 50))
 
-endlessButtonPic = image.load('Pictures/Endless.png')
+endlessButtonPic = image.load('Pictures/Endless.png').convert_alpha()
 endlessButton = transform.scale(endlessButtonPic, (200, 50))
 
-instructionsButtonPic = image.load('Pictures/Instructions.png')
+instructionsButtonPic = image.load('Pictures/Instructions.png').convert_alpha()
 instructionsButton = transform.scale(instructionsButtonPic, (300, 50))
 
-newPic = image.load('Pictures/New Game Button.png')
+newPic = image.load('Pictures/New Game Button.png').convert_alpha()
 newButton = transform.scale(newPic, (200, 50))
-loadPic = image.load('Pictures/Load Game Button.png')
+loadPic = image.load('Pictures/Load Game Button.png').convert_alpha()
 loadButton = transform.scale(loadPic, (200, 50))
 
 classScreen = image.load('Pictures/Class Selection Background.jpg').convert()
 classBack = transform.scale(classScreen, (1035, 800))
 
-scout1 = image.load('Pictures/Rifle Scout.png')
+scout1 = image.load('Pictures/Rifle Scout.png').convert_alpha()
 rScout = transform.scale(scout1, (50, 50))
-marine1 = image.load('Pictures/Rifle Marine.png')
+marine1 = image.load('Pictures/Rifle Marine.png').convert_alpha()
 rMarine = transform.scale(marine1, (50, 50))
-tank1 = image.load('Pictures/Pistol Tank.png')
+tank1 = image.load('Pictures/Pistol Tank.png').convert_alpha()
 pTank = transform.scale(tank1, (50, 50))
 
-classScreenName = image.load('Pictures/pick your class.png')
+classScreenName = image.load('Pictures/pick your class.png').convert_alpha()
 classTitle = transform.scale(classScreenName, (400, 100))
-startPic = image.load('Pictures/Start Button.png')
+startPic = image.load('Pictures/Start Button.png').convert_alpha()
 start = transform.scale(startPic, (200, 75))
-scoutName = image.load('Pictures/Scout Name.png')
+scoutName = image.load('Pictures/Scout Name.png').convert_alpha()
 scoutLable = transform.scale(scoutName, (150, 50))
-scoutWords = image.load('Pictures/Scout Stats.png')
+scoutWords = image.load('Pictures/Scout Stats.png').convert_alpha()
 scoutInfo = transform.scale(scoutWords, (300, 175))
-marineName = image.load('Pictures/Marine Name.png')
+marineName = image.load('Pictures/Marine Name.png').convert_alpha()
 marineLable = transform.scale(marineName, (150, 50))
-marineWords = image.load('Pictures/Marine Stats.png')
+marineWords = image.load('Pictures/Marine Stats.png').convert_alpha()
 marineInfo = transform.scale(marineWords, (300, 175))
-tankName = image.load('Pictures/Tank Name.png')
+tankName = image.load('Pictures/Tank Name.png').convert_alpha()
 tankLable = transform.scale(tankName, (100, 50))
-tankWords = image.load('Pictures/Tank Stats.png')
+tankWords = image.load('Pictures/Tank Stats.png').convert_alpha()
 tankInfo = transform.scale(tankWords, (300, 175))
 
-back = image.load('Pictures/Back.png')
+back = image.load('Pictures/Back.png').convert_alpha()
 back = transform.scale(back, (150, 75))
-story = image.load('Pictures/Story.png')
+story = image.load('Pictures/Story.png').convert_alpha()
 story = transform.scale(story, (525, 163))
-controls = image.load('Pictures/Controls.png')
+controls = image.load('Pictures/Controls.png').convert_alpha()
 controls = transform.scale(controls, (525, 163))
-roomExplain = image.load('Pictures/Rooms.png')
+roomExplain = image.load('Pictures/Rooms.png').convert_alpha()
 roomExplain = transform.scale(roomExplain, (525, 163))
-goal = image.load('Pictures/Goal.png')
+goal = image.load('Pictures/Goal.png').convert_alpha()
 goal = transform.scale(goal, (525, 163))
 
-resume = image.load('Pictures/Resume.png')
+resume = image.load('Pictures/Resume.png').convert_alpha()
 resume = transform.scale(resume, (175, 50))
-saveQuit = image.load('Pictures/Save+Quit.png')
+saveQuit = image.load('Pictures/Save+Quit.png').convert_alpha()
 saveQuit = transform.scale(saveQuit, (275, 50))
-quitButton = image.load('Pictures/Quit.png')
+quitButton = image.load('Pictures/Quit.png').convert_alpha()
 quitButton = transform.scale(quitButton, (100, 50))
 
-rilfeScout = image.load('Pictures/Rifle Scout.png')
+rilfeScout = image.load('Pictures/Rifle Scout.png').convert_alpha()
 back1 = image.load("Pictures/Level One Background.png").convert()
 back1 = transform.scale(back1, (2000, 2000))
 back2 = image.load('Pictures/Level Two Background.png').convert()
 back2 = transform.scale(back2, (1024, 700))
-badguy1 = image.load("Pictures/Alien 1.png")
+badguy1 = image.load("Pictures/Alien 1.png").convert_alpha()
 badguy1 = transform.scale(badguy1, (60, 60))
-badguy2 = image.load('Pictures/Alien 2.png')
+badguy2 = image.load('Pictures/Alien 2.png').convert_alpha()
 badguy2 = transform.scale(badguy2,(70,60))
-badguy3 = image.load('Pictures/Alien 3.png')
+badguy3 = image.load('Pictures/Alien 3.png').convert_alpha()
 badguy3 = transform.scale(badguy3, (80,80))
-boss = image.load('Pictures/Boss Alien.png')
-arrow = image.load('Pictures/arrow.png')
+boss = image.load('Pictures/Boss Alien.png').convert_alpha()
+arrow = image.load('Pictures/arrow.png').convert_alpha()
 rightArrow = transform.scale(arrow, (100,50))
 upArrow = transform.rotate(rightArrow, (90))
 leftArrow = transform.rotate(rightArrow, (180))
 downArrow = transform.rotate(rightArrow, (270))
-hole = image.load('Pictures/hole.png')
+hole = image.load('Pictures/hole.png').convert_alpha()
 hole = transform.scale(hole, (50,50))
 
-ship4 = image.load('Pictures/Alien(2) Ship 1.png')
+ship4 = image.load('Pictures/Alien(2) Ship 1.png').convert_alpha()
 ship4 = transform.scale(ship4, (225, 525))
-ship5 = image.load('Pictures/Alien(2) Ship 2.png')
+ship5 = image.load('Pictures/Alien(2) Ship 2.png').convert_alpha()
 ship5 = transform.scale(ship5, (225, 575))
-ship6 = image.load('Pictures/Alien(2) Ship 3.png')
-ship7 = image.load('Pictures/Alien(3) Ship 1.png')
+ship6 = image.load('Pictures/Alien(2) Ship 3.png').convert_alpha()
+ship7 = image.load('Pictures/Alien(3) Ship 1.png').convert_alpha()
 ship7 = transform.scale(ship7, (300, 450))
-ship7 = transform.rotate(ship7, (-135))
-ship8 = image.load('Pictures/Alien(3) Ship 2.png')
+ship8 = image.load('Pictures/Alien(3) Ship 2.png').convert_alpha()
 ship8 = transform.scale(ship8, (225,300))
-ship9 = image.load('Pictures/Earth Ship.png')
+ship9 = image.load('Pictures/Earth Ship.png').convert_alpha()
 ship9 = transform.scale(ship9, (250, 400))
-build1 = image.load('Pictures/Building 1.png')
+build1 = image.load('Pictures/Building 1.png').convert_alpha()
 build1 = transform.scale(build1, (350, 900))
-build2 = image.load('Pictures/Building 2.png')
+build2 = image.load('Pictures/Building 2.png').convert_alpha()
 build2 = transform.scale(build2, (200, 550))
-build3 = image.load('Pictures/Infected Building 1.png')
+build3 = image.load('Pictures/Infected Building 1.png').convert_alpha()
 build3 = transform.scale(build3, (480, 480))
-build4 = image.load('Pictures/Infected Building 2.png')
+build4 = image.load('Pictures/Infected Building 2.png').convert_alpha()
 build4 = transform.scale(build4, (300, 150))
 build4 = transform.rotate(build4, (90))
-build5 = image.load('Pictures/Infected Building 3.png')
+build5 = image.load('Pictures/Infected Building 3.png').convert_alpha()
 build5 = transform.scale(build5, (125,100))
-crat = image.load("Pictures/Weapon Crate.png")
-crat3 = image.load('Pictures/Med Crate.png')
-junk1 = image.load('Pictures/Junk 1.png')
+crat = image.load("Pictures/Weapon Crate.png").convert_alpha()
+crat3 = image.load('Pictures/Med Crate.png').convert_alpha()
+junk1 = image.load('Pictures/Junk 1.png').convert_alpha()
 junk1 = transform.scale(junk1, (75, 150))
-junk2 = image.load('Pictures/Junk 2.png')
+junk2 = image.load('Pictures/Junk 2.png').convert_alpha()
 junk2 = transform.scale(junk2, (75, 150))
 junk2 = transform.rotate(junk2, (180))
-junk3 = image.load('Pictures/Junk 3.png')
+junk3 = image.load('Pictures/Junk 3.png').convert_alpha()
 junk3 = transform.scale(junk3, (100, 150))
 junk3 = transform.rotate(junk3, (90))
-junk4 = image.load('Pictures/Junk 4.png')
-junk5 = image.load('Pictures/Junk 5.png')
+junk4 = image.load('Pictures/Junk 4.png').convert_alpha()
+junk5 = image.load('Pictures/Junk 5.png').convert_alpha()
 junk5 = transform.rotate(junk5, (90))
-junk6 = image.load('Pictures/Junk 6.png')
+junk6 = image.load('Pictures/Junk 6.png').convert_alpha()
 
 
 for i in range(1, 17):
@@ -187,6 +186,8 @@ def distance(x1, y1, x2, y2):
 def moveGuy(x, y):
     global guyx
     global guyy
+    global lastx
+    global lasty
     keys = key.get_pressed()
     if keys[ord("a")]:
         lastx = guyx
@@ -399,7 +400,7 @@ def checkHit(rect):
 
 
 def checkWinLevel(badGuys):
-    if len(badGuys) == 0 and len(badGuys2)==0:
+    if len(badGuys) == 0 and len(badGuys2) == 0 and len(badGuys3) == 0:
         return True
     return False
 
@@ -518,7 +519,6 @@ def drawScene(badGuys, badGuys2, arrows, back, builds):
         moveBadGuys3(bguy, guyx, guyy)
         alien3 = transform.rotate(badguy3, bguy[2])
         screen.blit(alien3, bguy[:2])
-
 
     for b in builds:
         screen.blit(b[0], (b[1], b[2]))
@@ -783,22 +783,70 @@ def classSelect():
             return 'menu'
         display.flip()
 
-
-def endless():
+'''
+def endlessMode():
     global running
+    global Class
+    global gunHeat
+    global weapon
+    global badGuys
+    global badGuys3
+    global Wcrates
+    global Mcrates
+    global guyx
+    global guyy
+    global shots
+    global shotgunList
     endlessRunning = True
+    shots = []
+    badGuys = [[100, 100, 0, 2]]
+    badGuys2 = [[]]
+    badGuys3 = [[400, 300, 0, 3], [100, 600, 0, 3]]
+    Wcrates = []
+    arrows = []
+    builds = []
+    Mcrates = []
 
     while endlessRunning:
         for evnt in event.get():
             if evnt.type == QUIT:
                 running = False
                 endlessRunning = False
+            if evnt.type == KEYDOWN:
+                if evnt.key == K_p:
+                    a = pause()
+                    if a != None:
+                        return a
 
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
+        if mb[0] == 1 and gunHeat <= 0:
+            gunHeat = Heat
+            if weapon == 'Shotgun':
+                shotgunList.append(
+                    shotgun(-angle - 90, -angle - (90 + randint(0, 10)), -angle - (90 - randint(0, 10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0, 50) == 1:
+                badshots.append(addBadShot(bguy, -ang, 10))
+            moveBadShots(bguy, badshots)
+
+        gunHeat -= 1
+        boomBombs(bombs)
+        moveShots(shots)
+        moveShotgun(shotgunList)
+        drawScene(badGuys, badGuys2, arrows, back1, builds)
+        moveGuy(guyx, guyy)
+        myClock.tick(60)
+        blockMove([[Rect(50, 300, 250, 400), 50, 300, 300, 700]])
+        display.flip()
+        win = checkWinLevel(badGuys)
+
         display.flip()
     return 'menu'
-
+'''
 
 def instructions():
     global running
@@ -845,9 +893,18 @@ def pause():
         image.set_alpha(150)
         screen.blit(image, (0, 0))
         screen.blit(resume, (425, 225))
-        screen.blit(saveQuit, (375, 325))
+        if page != 'endless':
+            screen.blit(saveQuit, (375, 325))
         screen.blit(quitButton, (462, 425))
+        print(page)
         display.flip()
+        '''
+        if page == 'endless':
+            if resumeRect.collidepoint(mx, my) and mb[0] == 1:
+                pauseRunning = False
+            if quitRect.collidepoint(mx, my) and mb[0] == 1:
+                return 'menu'
+        '''
         if resumeRect.collidepoint(mx, my) and mb[0] == 1:
             pauseRunning = False
         if saveQuitRect.collidepoint(mx, my) and mb[0] == 1:
@@ -864,23 +921,10 @@ def blockMove(image):
     keys = key.get_pressed()
     grect = guyRect(guyx, guyy)
     for i in image:
-        if grect.colliderect(i[0]):
-            if keys[ord("a")]:
-                if guyx < int(i[3]) and guyx > int(i[1]) and guyy > int(i[2]) and guyy < int(i[4]):
-                    guyx = lastx
-                    guyy = lasty
-            if keys[ord("d")]:
-                if guyx > int(i[1]) and guyx < int(i[3]) and guyy > int(i[2]) and guyy < int(i[4]):
-                    guyx = lastx
-                    guyy = lasty
-            if keys[ord("w")]:
-                if guyy < int(i[4]) and guyy > int(i[2]) and guyx > int(i[1]) and guyx < int(i[3]):
-                    guyx = lastx
-                    guyy = lasty
-            if keys[ord("s")]:
-                if guyy > int(i[2]) and guyy < int(i[4]) and guyx > int(i[1]) and guyx < int(i[3]):
-                    guyx = lastx
-                    guyy = lasty
+        imageRect = i[0]
+        if grect.colliderect(imageRect):
+            guyx = lastx
+            guyy = lasty
 
 
 def room_1():
@@ -917,9 +961,6 @@ def room_1():
                     if a != None:
                         return a
 
-        keys = key.get_pressed()
-        if keys[27]:
-            break
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
@@ -985,10 +1026,6 @@ def room_2():
                     if a != None:
                         return a
 
-        keys = key.get_pressed()
-        if keys[27]:
-            break
-
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
@@ -1001,7 +1038,6 @@ def room_2():
             if randint(0,50)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots)
-
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1066,10 +1102,6 @@ def room_3():
                     a = pause()
                     if a != None:
                         return a
-
-        keys = key.get_pressed()
-        if keys[27]:
-            break
 
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
@@ -2171,10 +2203,12 @@ while page != 'exit':
         page = gameLoad()
     if page == 'load':
         page = load()
+    #if page == 'endlesss':
+        #page == endless()
     if page == 'classSelect':
         page = classSelect()
-    if page == 'endless':
-        page = endless()
+    #if page == 'endlessMode':
+        #page = endlessMode()
     if page == 'instructions':
         page = instructions()
     if page == 'room_1':
