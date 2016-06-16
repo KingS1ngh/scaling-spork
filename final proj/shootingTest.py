@@ -1,5 +1,6 @@
 from pygame import *
 from math import *
+from random import *
 import glob
 
 screen = display.set_mode((1024, 700))
@@ -31,6 +32,8 @@ Heat = 20
 damage = 1
 guy = image.load('Pictures/'+weapon+' '+Class+'.png')
 shots = []
+shotgunList = []
+badshots = []
 gunAng = 0.0
 power = 5.0
 gunHeat = 0
@@ -38,6 +41,7 @@ keys = key.get_pressed()
 BADSPEED = 2.5
 badGuys = []
 badGuys2 = []
+badGuys3 = []
 Wcrates = [[200, 300], [500, 70], [400, 400]]
 bombs = []
 right = (924, 325)
@@ -123,6 +127,8 @@ badguy1 = image.load("Pictures/Alien 1.png")
 badguy1 = transform.scale(badguy1, (60, 60))
 badguy2 = image.load('Pictures/Alien 2.png')
 badguy2 = transform.scale(badguy2,(70,60))
+badguy3 = image.load('Pictures/Alien 3.png')
+badguy3 = transform.scale(badguy3, (80,80))
 arrow = image.load('Pictures/arrow.png')
 rightArrow = transform.scale(arrow, (100,50))
 upArrow = transform.rotate(rightArrow, (90))
@@ -225,12 +231,115 @@ def vectToXY(mag, ang):
 
 
 def addShot(ang, power):
-    shot = [0, 0, 0, 0, (255, 0, 0)]
+    shot = [0, 0, 0, 0]
     shot[X], shot[Y] = vectToXY(30, ang)
     shot[X] += guyx
     shot[Y] += guyy
     shot[VX], shot[VY] = vectToXY(power, ang)
     return shot
+
+
+def addBadShot(bguy, ang, power):
+    badshot = [0, 0, 0, 0]
+    badshot[X], badshot[Y] = vectToXY(30, ang)
+    badshot[X] += bguy[X]+40
+    badshot[Y] += bguy[Y]+40
+    badshot[VX], badshot[VY] = vectToXY(power, ang)
+    return badshot
+
+def shotgun(ang, ang1 ,ang2, power):
+    shot=[[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+    shot[0][X], shot[0][Y] = vectToXY(30,ang)
+    shot[1][X], shot[1][Y] = vectToXY(30,ang1)
+    shot[2][X], shot[2][Y] = vectToXY(30,ang2)
+    for s in shot:
+        s[X]+=guyx
+        s[Y]+=guyy
+    shot[0][VX], shot[0][VY]= vectToXY(power, ang)
+    shot[1][VX], shot[1][VY]= vectToXY(power, ang1)
+    shot[2][VX], shot[2][VY]= vectToXY(power, ang2)
+    return shot
+
+
+def moveShots(shots):
+    global badshots
+    killlist = []
+    for shot in shots:
+        shot[X] += shot[VX]
+        shot[Y] += shot[VY]
+        if shot[X] > guyx+400 or guyx-400 > shot[X] or guyy-400 > shot[Y] or shot[Y] > guyy+400:
+            killlist.append(shot)
+        for bguy in badGuys[:]:
+            eRect=enemyRect(bguy)
+            if eRect.collidepoint(shot[X], shot[Y]) and shot not in killlist:
+                bguy[3]-=damage
+                killlist.append(shot)
+                if bguy[3]<=0:
+                    badGuys.remove(bguy)
+        for bguy in badGuys2:
+            eRect = enemyRect(bguy)
+            if eRect.collidepoint(shot[X], shot[Y]):
+                badGuys2.remove(bguy)
+        for bguy in badGuys3[:]:
+            eRect=enemyRect(bguy)
+            if eRect.collidepoint(shot[X], shot[Y]) and shot not in killlist:
+                bguy[3]-=damage
+                killlist.append(shot)
+                if bguy[3]<=0:
+                    badGuys3.remove(bguy)
+                    badshots = []
+    for s in killlist:
+        shots.remove(s)
+
+
+def moveShotgun(shotgunList):
+    killlist = []
+    for s in shotgunList:
+        for shot in s:
+            shot[X] += shot[VX]
+            shot[Y] += shot[VY]
+            if shot[X] > guyx+400 or guyx-400 > shot[X] or guyy-400 > shot[Y] or shot[Y] > guyy+400 and shot not in killlist:
+                killlist.append(shot)
+            for bguy in badGuys[:]:
+                eRect=enemyRect(bguy)
+                if eRect.collidepoint(shot[X], shot[Y]) and shot not in killlist:
+                    bguy[3]-=damage
+                    killlist.append(shot)
+                    if bguy[3]<=0:
+                        badGuys.remove(bguy)
+                        killlist.append(shot)
+            for bguy in badGuys2:
+                eRect = enemyRect(bguy)
+                if eRect.collidepoint(shot[X], shot[Y]):
+                    badGuys2.remove(bguy)
+            for bguy in badGuys3[:]:
+                eRect=enemyRect(bguy)
+                if eRect.collidepoint(shot[X], shot[Y]) and shot not in killlist:
+                    bguy[3]-=damage
+                    killlist.append(shot)
+                    if bguy[3]<=0:
+                        badGuys3.remove(bguy)
+    for s in killlist:
+        for k in shotgunList:
+            for j in k:
+                if s==j:
+                    k.remove(j)
+
+
+def moveBadShots(bguy, badshots):
+    global currentHealth
+    killlist = []
+    for shot in badshots:
+        shot[X] += shot[VX]
+        shot[Y] += shot[VY]
+        if shot[X] > bguy[X]+400:
+            killlist.append(shot)
+        gRect = guyRect(guyx, guyy)
+        if gRect.collidepoint(shot[X], shot[Y]):
+            currentHealth-=10/len(badshots)
+            killlist.append(shot)
+    for s in killlist:
+        badshots.remove(s)
 
 
 def badMove(bguy, x, y, BADSPEED):
@@ -256,32 +365,18 @@ def moveBadGuys2(bguy, guyx, guyy):
     bguy[2] = moveAng-90
 
 
-def moveShots(shots):
-    killlist = []
-    for shot in shots:
-        shot[X] += shot[VX]
-        shot[Y] += shot[VY]
-        if shot[X] > guyx+400 or guyx-400 > shot[X] or guyy-400 > shot[Y] or shot[Y] > guyy+400:
-            killlist.append(shot)
-        for bguy in badGuys[:]:
-            eRect=enemyRect(bguy)
-            if eRect.collidepoint(shot[X], shot[Y]):
-                bguy[3]-=damage
-                killlist.append(shot)
-                if bguy[3]<=0:
-                    badGuys.remove(bguy)
-    for s in killlist:
-        shots.remove(s)
+def moveBadGuys3(bguy, guyx, guyy):
+    moveX, moveY, moveAng = badMove(bguy, guyx, guyy, 4)
+    bguy[2] = moveAng-90
+    return moveAng
 
 
 def boomBombs(bombs):
     rem=[]
     for bomb in bombs:
-        bomb[2]+=1
-        if bomb[2]>90 and bomb[2]%5==0:
-            bomb[3]+=1
-            if bomb[3]==16:
-                rem.append(bomb)
+        bomb[3]+=1
+        if bomb[3]==16:
+            rem.append(bomb)
     for bomb in rem:
         bombs.remove(bomb)
 
@@ -289,23 +384,6 @@ def boomBombs(bombs):
 def enemyRect(bguy):
     eRect = Rect(bguy[0]+35, bguy[1]+35, 40, 40)
     return eRect
-
-
-'''def checkKill(x, y):
-    global badGuys
-    for bguy in badGuys[:]:
-        rect = enemyRect(bguy)
-        if rect.collidepoint(x, y):
-            bguy[3]-=1
-            if bguy[3]<=0:
-                badGuys.remove(bguy)
-    for bguy in badGuys2[:]:
-        rect = enemyRect(bguy)
-        if rect.collidepoint(x,y):
-            badGuys2.remove(bguy)
-            return True
-    return False'''
-
 
 def checkHit(rect):
     global bombs
@@ -316,12 +394,12 @@ def checkHit(rect):
         if rect.collidepoint(bguy[0]+35, bguy[1]+35):
             currentHealth -= 10
             badGuys.remove(bguy)
-            bombs.append([bguy[0], bguy[1]])
+            bombs.append([bguy[0], bguy[1],0,0])
     for bguy in badGuys2:
         if rect.collidepoint(bguy[0]+35, bguy[1]+35):
             currentHealth -= 10
             badGuys2.remove(bguy)
-            bombs.append([bguy[0], bguy[1]])
+            bombs.append([bguy[0], bguy[1], 0, 0])
             return True
     return False
 
@@ -419,20 +497,20 @@ def drawScene(badGuys, badGuys2, arrows, back, builds):
         medcrate = transform.scale(crat3, (40, 60))
         screen.blit(medcrate, (med[0], med[1]))
         checkUpgrade(Wcrates, Mcrates, guyx, guyy)
-
+    if weapon == 'Shotgun':
+        for s in shotgunList[:]:
+            for shot in s:
+                screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
     for shot in shots[:]:
         screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
-        # draw.circle(screen,(30,30,255),(int(shot[X]),int(shot[Y])),3)
-        #used = checkKill(shot[X], shot[Y])
 
-       # if used:
-       #     shots.remove(shot)
+    for shot in badshots[:]:
+        screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
 
     for bguy in badGuys:
         moveBadGuys1(bguy, guyx, guyy)
         alien1 = transform.rotate(badguy1, bguy[2])
         screen.blit(alien1, bguy[:2])
-        eRect = enemyRect(bguy)
 
     for bomb in bombs:
         screen.blit(bombPics[bomb[3]], (bomb[X],bomb[Y]))
@@ -441,7 +519,12 @@ def drawScene(badGuys, badGuys2, arrows, back, builds):
         moveBadGuys2(bguy, guyx, guyy)
         alien2= transform.rotate(badguy2, bguy[2])
         screen.blit(alien2, bguy[:2])
-        eRect = enemyRect(bguy)
+
+    for bguy in badGuys3:
+        moveBadGuys3(bguy, guyx, guyy)
+        alien3 = transform.rotate(badguy3, bguy[2])
+        screen.blit(alien3, bguy[:2])
+
 
     for b in builds:
         screen.blit(b[0], (b[1], b[2]))
@@ -749,19 +832,23 @@ def room_1():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys3
     global Wcrates
     global Mcrates
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
     room_1Running = True
     lastRoom = 'room_1'
     badGuys=[[100,100,0,2]]
+    badGuys3=[[400,300,0,3]]
     Wcrates=[]
     arrows = [up]
     builds = [[ship9, 50, 300]]
     Mcrates = []
-
     while room_1Running:
         for evnt in event.get():
             if evnt.type == QUIT:
@@ -774,14 +861,23 @@ def room_1():
         keys = key.get_pressed()
         if keys[27]:
             break
-
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+            moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -807,6 +903,10 @@ def room_2():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_2Running = True
     lastRoom = 'room_2'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -831,10 +931,21 @@ def room_2():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
+
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -873,6 +984,10 @@ def room_3():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_3Running = True
     lastRoom = 'room_3'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -897,10 +1012,20 @@ def room_3():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -931,6 +1056,10 @@ def room_4():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_4Running = True
     lastRoom = 'room_4'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -955,10 +1084,20 @@ def room_4():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -989,6 +1128,10 @@ def room_5():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_5Running = True
     lastRoom = 'room_5'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1013,10 +1156,20 @@ def room_5():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1051,6 +1204,10 @@ def room_6():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_6Running = True
     lastRoom = 'room_6'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1075,10 +1232,20 @@ def room_6():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1117,9 +1284,15 @@ def room_7():
     global guyx
     global guyy
     global lastRoom
+    global badGuys2
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_7Running = True
     lastRoom = 'room_7'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys2=[[200,400,0],[500,100,0],[400,600,0]]
     Wcrates=[]
     arrows = [up,left,down]
     builds = [[ship4, 300, 150]]
@@ -1141,10 +1314,20 @@ def room_7():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1179,6 +1362,10 @@ def room_8():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_8Running = True
     lastRoom = 'room_8'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1203,10 +1390,20 @@ def room_8():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1241,6 +1438,10 @@ def room_9():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_9Running = True
     lastRoom = 'room_9'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1265,10 +1466,20 @@ def room_9():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1307,6 +1518,10 @@ def room_10():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_10Running = True
     lastRoom = 'room_10'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1331,10 +1546,20 @@ def room_10():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         boomBombs(bombs)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
@@ -1370,6 +1595,10 @@ def room_11():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_11Running = True
     lastRoom = 'room_11'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1394,10 +1623,20 @@ def room_11():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1428,6 +1667,10 @@ def room_12():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_12Running = True
     lastRoom = 'room_12'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1452,10 +1695,20 @@ def room_12():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1482,6 +1735,10 @@ def room_13():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_13Running = True
     lastRoom = 'room_13'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1506,10 +1763,20 @@ def room_13():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1537,6 +1804,10 @@ def room_1B():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_1BRunning = True
     lastRoom = 'room_1B'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1562,10 +1833,20 @@ def room_1B():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1592,6 +1873,10 @@ def room_2B():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_2BRunning = True
     lastRoom = 'room_2B'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1616,10 +1901,20 @@ def room_2B():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1650,6 +1945,10 @@ def room_3B():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_3BRunning = True
     lastRoom = 'room_3B'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1674,10 +1973,20 @@ def room_3B():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1701,6 +2010,10 @@ def room_4B():
     global guyx
     global guyy
     global lastRoom
+    global shots
+    global shotgunList
+    shots = []
+    shotgunList = []
     room_4BRunning = True
     lastRoom = 'room_4B'
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
@@ -1725,10 +2038,20 @@ def room_4B():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            shots.append(addShot(-angle - 90, power))
+            if weapon == 'Shotgun':
+                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
+            else:
+                shots.append(addShot(-angle - 90, power))
+        for bguy in badGuys3:
+            ang = moveBadGuys3(bguy, guyx, guyy)
+            if randint(0,50)==1:
+                badshots.append(addBadShot(bguy,-ang,10))
+                moveBadShots(bguy,badshots)
 
         gunHeat -= 1
+        boomBombs(bombs)
         moveShots(shots)
+        moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
@@ -1743,7 +2066,7 @@ def room_4B():
     return 'title'
 
 
-page = 'room_10'
+page = 'title'
 while page != 'exit':
     if page == 'title':
         page = title()
