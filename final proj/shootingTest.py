@@ -930,18 +930,18 @@ def endlessMode(): #runs endless mode, enemies respawn continually faster and in
     shots = []
     badGuys = [[50, 50, 0, 2], [150, 50, 0, 2], [250, 50, 0, 2], [350, 50, 0, 2], [450, 50, 0, 2], [550, 50, 0, 2],
                [650, 50, 0, 2], [750, 50, 0, 2], [850, 50, 0, 2],
-               [950, 50, 0, 2]]
+               [950, 50, 0, 2]] #beginning list of bad guys
     badGuys2 = []
     badGuys3 = []
     Wcrates = []
     Mcrates = []
     arrows = []
     builds = []
-    waves = 1
-    time = timer()
-    enemyCap = 40
-    currentEnemy = 10
-    killScore = 0
+    waves = 1 #keep track of the amount of respawns
+    time = timer() #starts counting time starting from epoch
+    enemyCap = 40 #makes sure not too many enemies are loaded so it dosent crash
+    currentEnemy = 10 #at the start ten enemies are blitted, when an enemy is killed -= 1 (see checkhit functions)
+    killScore = 0 #your total score for after enemies are dead
 
     while endlessRunning:
         for evnt in event.get():
@@ -972,8 +972,9 @@ def endlessMode(): #runs endless mode, enemies respawn continually faster and in
                 badshots.append(addBadShot(bguy, -ang, 10))
             moveBadShots(bguy, badshots)
 
-        timeCount = (timer() - time)
-        if waves <= 3:
+        timeCount = (timer() - time) #time count is the time that started at the beginning of function subtract the timer started in loop
+                                     #or total time minus epoch time
+        if waves <= 3: #the if waves decrease the time it takes to spawn enemies as waves grows
             speedDiff = 20
         if waves > 3:
             speedDiff = 15
@@ -983,8 +984,8 @@ def endlessMode(): #runs endless mode, enemies respawn continually faster and in
             speedDiff = 5
         if waves > 12:
             speedDiff = 2
-        if timeCount >= speedDiff:
-            if waves <= 3:
+        if timeCount >= speedDiff: #when the timer == the respawn time
+            if waves <= 3: #these if waves spawn the enemies
                 badGuys.append([50, 50, 0, 2])
                 badGuys.append([100, 50, 0, 2])
                 badGuys.append([150, 50, 0, 2])
@@ -996,7 +997,7 @@ def endlessMode(): #runs endless mode, enemies respawn continually faster and in
                 badGuys.append([450, 50, 0, 2])
                 badGuys.append([500, 50, 0, 2])
                 currentEnemy += 10
-            if waves > 3 and currentEnemy < enemyCap:
+            if waves > 3 and currentEnemy < enemyCap: #makes sure that it dosent blit too many more enemies than the cap
                 badGuys.append([50, 50, 0, 2])
                 badGuys.append([100, 50, 0, 2])
                 badGuys.append([150, 50, 0, 2])
@@ -1029,7 +1030,7 @@ def endlessMode(): #runs endless mode, enemies respawn continually faster and in
                 badGuys3.append([920, 840, 0, 3])
                 currentEnemy += 2
             waves += 1
-            time = (time + speedDiff)
+            time = (time + speedDiff) #resets timer when it hits the speedDiff
 
         gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
         #CALLING FUNCTIONS#
@@ -1046,12 +1047,12 @@ def endlessMode(): #runs endless mode, enemies respawn continually faster and in
         display.flip()
 
 
-def yourScore():
+def yourScore(): #a quick screen to display your score before returning to menu
     global running
     global killScore
     highscoreRunning = True
     backRect = Rect(0, 630, 150, 75)
-    finalScore = str(killScore)
+    finalScore = str(killScore) #turns score to string so it can be rendered as text
     textArea = Rect(375, 325, 275, 50)
 
     while highscoreRunning:
@@ -1064,14 +1065,14 @@ def yourScore():
         mb = mouse.get_pressed()
         screen.blit(classBack, (0, 0))
         screen.blit(back, (0, 630))
-        txtPic = arialFont.render('Your Score Was ' + finalScore, True, yellow)
+        txtPic = arialFont.render('Your Score Was ' + finalScore, True, yellow) #blits your score
         screen.blit(txtPic, (textArea.x + 3, textArea.y + 2))
         if backRect.collidepoint(mx, my) and mb[0] == 1:
-            return 'menu'
+            return 'menu' #hit back return to menu
         display.flip()
 
 
-def overwrite():
+def overwrite(): #if you select a slot with a save file in load, this screen lets you choose to use the save file or overwrite it
     global running
     global saveName
     global yesOrNo
@@ -1091,29 +1092,29 @@ def overwrite():
         mb = mouse.get_pressed()
         screen.blit(classBack, (0, 0))
         screen.blit(back, (0, 555))
-        overwriteTxt = arialFont.render('Overwrite This File?', True, yellow)
+        overwriteTxt = arialFont.render('Overwrite This File?', True, yellow) #blits question
         screen.blit(overwriteTxt, (overwriteRect.x + 3, overwriteRect.y + 2))
-        yesTxt = arialFont.render('Yes', True, yellow)
+        yesTxt = arialFont.render('Yes', True, yellow) #blits yes on yes button
         screen.blit(yesTxt, (yesRect.x + 3, yesRect.y + 2))
-        noTxt = arialFont.render('No', True, yellow)
+        noTxt = arialFont.render('No', True, yellow) #blits no on no button
         screen.blit(noTxt, (noRect.x + 3, noRect.y + 2))
-        if yesRect.collidepoint(mx, my) and mb[0] == 1:
-            yesOrNo = 'yes'
-            saveWrite = open('#1.txt', 'w')
+        if yesRect.collidepoint(mx, my) and mb[0] == 1: #opens and closes file as w too wipe file of data
+            yesOrNo = 'yes' #tells menu that there is a file to open
+            saveWrite = open('#1.txt', 'w') #wipe file
             saveWrite.close()
-            name = getName()
+            name = getName() #enters new username for file
             if name == '':
                 return
             return 'classSelect'
-        if noRect.collidepoint(mx, my) and mb[0] == 1:
+        if noRect.collidepoint(mx, my) and mb[0] == 1: #returns menu and uses all previously existing data
             yesOrNo = 'no'
             return 'menu'
-        if backRect.collidepoint(mx, my) and mb[0] == 1:
+        if backRect.collidepoint(mx, my) and mb[0] == 1: #previous screen
             return 'load'
         display.flip()
 
 
-def instructions():
+def instructions(): #tell the user how to play
     global running
     instructionsRunning = True
     backRect = Rect(0, 630, 150, 75)
@@ -1126,19 +1127,19 @@ def instructions():
 
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
-        screen.blit(classBack, (0, 0))
-        screen.blit(story, (250, 10))
-        screen.blit(controls, (250, 183))
-        screen.blit(roomExplain, (250, 346))
-        screen.blit(goal, (250, 515))
-        screen.blit(hole, (600, 635))
-        screen.blit(back, (0, 630))
+        screen.blit(classBack, (0, 0))       #
+        screen.blit(story, (250, 10))        #
+        screen.blit(controls, (250, 183))    #
+        screen.blit(roomExplain, (250, 346)) # blits instructions onto the screen as picture to read
+        screen.blit(goal, (250, 515))        #
+        screen.blit(hole, (600, 635))        #
+        screen.blit(back, (0, 630))          #
         if backRect.collidepoint(mx, my) and mb[0] == 1:
             return 'menu'
         display.flip()
 
 
-def pause():
+def pause(): #used to pause the game during campaign or endless
     global running
     global saveName
     global Class
@@ -1151,7 +1152,7 @@ def pause():
     resumeRect = Rect(425, 225, 175, 50)
     saveQuitRect = Rect(375, 325, 275, 50)
     quitRect = Rect(462, 425, 100, 50)
-    image = screen.copy().convert()
+    image = screen.copy().convert() #uses copy of previous screen as background
 
     while pauseRunning:
         for evnt in event.get():
@@ -1161,20 +1162,20 @@ def pause():
 
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
-        screen.fill((0, 0, 0))
-        image.set_alpha(150)
+        screen.fill((0, 0, 0)) #
+        image.set_alpha(150)   # used to darken the screen to show itis in pause
         screen.blit(image, (0, 0))
         screen.blit(resume, (425, 225))
-        if page != 'endlessMode':
+        if page != 'endlessMode': #if you are in campaign blit these buttons
             screen.blit(saveQuit, (375, 325))
         screen.blit(quitButton, (462, 425))
         display.flip()
-        if page == 'endlessMode':
+        if page == 'endlessMode': #only blits quit and resume in endless because you cant save endless
             if resumeRect.collidepoint(mx, my) and mb[0] == 1:
                 pauseRunning = False
             if quitRect.collidepoint(mx, my) and mb[0] == 1:
                 return 'menu'
-        else:
+        else: #what u usually blit in campaign
             if resumeRect.collidepoint(mx, my) and mb[0] == 1:
                 pauseRunning = False
             if saveQuitRect.collidepoint(mx, my) and mb[0] == 1:
@@ -1184,13 +1185,13 @@ def pause():
 %s
 %s
 %s
-%s'''%(saveName, Class, weapon, currentHealth, lastRoom))
+%s'''%(saveName, Class, weapon, currentHealth, lastRoom)) #writes down all current info into the save file in chosen slot then quits
                 newFile.close()
                 return 'menu'
-            if quitRect.collidepoint(mx, my) and mb[0] == 1:
+            if quitRect.collidepoint(mx, my) and mb[0] == 1: #closes whole program
                 quit()
 
-
+################################################################# gotten from example program
 def getName():
     global saveName
     arialFont = font.SysFont("Times New Roman", 36)
@@ -1225,7 +1226,7 @@ def getName():
         txtPic = arialFont.render(saveName, True, (0, 0, 0))
         screen.blit(txtPic, (textArea.x + 3, textArea.y + 2))
         display.flip()
-
+########################################################################################################
 
 def blockMove(image): #stops guy from walking on space ships and junk pictures so they are like obtacles
     global lastx
@@ -2616,10 +2617,13 @@ def room_3B():
 
     return 'title'
 
-
+# main event loop of program
+# manages all functions that are used as screens
+# retuns str of function first which can set page to = the functions
+# this single variables allows all functions to be sequenced
 page = 'title'
 while page != 'exit':
-    mixer.music.set_volume(.7)
+    mixer.music.set_volume(.7) #plays music
     mixer.music.play(-1)
     if page == 'title':
         page = title()
