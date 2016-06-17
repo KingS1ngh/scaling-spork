@@ -2,14 +2,16 @@ from pygame import *
 from math import *
 from random import *
 import glob
+from time import time as timer
 #imports
 screen = display.set_mode((1024, 700))  #screen size
 myClock = time.Clock()  #used for fps and to make sure things dont move way too fast
 running = True  #program is running
 font.init() #initializing font
 arialFont2 = font.SysFont('Times New Roman', 20)    #setting font style and size
-guyx = 300  #character starting x
-guyy = 420  #character starting y
+arialFont = font.SysFont('Times New Roman', 36)
+guyx = 512  #character starting x
+guyy = 850  #character starting y
 lastx = 310 #last position character was(used for colliding with objects)
 lasty = 420
 X = 0   #the x coordinate in our lists is usually the first/ 0 pos, so X for that
@@ -29,6 +31,11 @@ Class = 'Scout' #setting variable for class, player will be allowed to pick duri
 weapon = 'Rifle'    #weapon being used, will change based on class and powerups
 currentHealth = 40  #set for scout class, but will change according to class selected #is the current health of player
 maxHealth = 40  #player max health, so health cant extend more than max after getting healing pack
+saveName = '' #the variable for the name of the save files the player sets
+saveFile = '' #variable for globed txt files in load
+yesOrNo = 'yes' #tells menu whether or not to load a txt file depending on your last function open
+currentEnemy = 0 #the current amount of enemies on the screen, used for endless
+killScore = 0 #score counter for endless
 Heat = 20   #default distance between every bullet fired by player, changes as upgrades are recieved
 damage = 1  #damage each bullet does, changes as upgrades are recived
 guy = image.load('Pictures/'+weapon+' '+Class+'.png')   #picture can change according to class and weapon being used
@@ -268,6 +275,8 @@ def shotgun(ang, ang1 ,ang2, power):    #same idea as addShot, but shot has 3 sh
 def moveShots(shots):
     global Boss
     global badshots
+    global currentEnemy
+    global killScore
     killlist = []   #bullets that need to be removed from the screen will be added here
     for shot in shots: #adding velicity x and y to every bullet in shots
         shot[X] += shot[VX]
@@ -283,10 +292,14 @@ def moveShots(shots):
                 killlist.append(shot) #add the shot to be deleted from screen
                 if bguy[3]<=0:#if health is 0 or less the badguy dies
                     badGuys.remove(bguy)
+                    currentEnemy -= 1
+                    killScore += 2
         for bguy in badGuys2:   #mostly same as badGuys but is 1 hit KO
             eRect = enemyRect(bguy)
             if eRect.collidepoint(shot[X], shot[Y]):
                 badGuys2.remove(bguy)
+                currentEnemy -= 1
+                killScore += 1
         for bguy in badGuys3[:]: #same as other two but has 3 health
             eRect=enemyRect(bguy)
             if eRect.collidepoint(shot[X], shot[Y]) and shot not in killlist:
@@ -294,6 +307,8 @@ def moveShots(shots):
                 killlist.append(shot)
                 if bguy[3]<=0:
                     badGuys3.remove(bguy)
+                    currentEnemy -= 1
+                    killScore += 3
                     badshots = []
         for b in Boss: #does same as other loops but with boss, and boss has 50 health
             bossrect = bossRect(b)
@@ -309,6 +324,8 @@ def moveShots(shots):
 
 def moveShotgun(shotgunList):   #does the exact same thing as moveShots but specialized for the shotgun
     global badshots
+    global currentEnemy
+    global killScore
     killlist = []
     for s in shotgunList:
         for shot in s:
@@ -324,10 +341,14 @@ def moveShotgun(shotgunList):   #does the exact same thing as moveShots but spec
                     if bguy[3]<=0:
                         badGuys.remove(bguy)
                         killlist.append(shot)
+                        currentEnemy -= 1
+                        killScore += 2
             for bguy in badGuys2:
                 eRect = enemyRect(bguy)
                 if eRect.collidepoint(shot[X], shot[Y]):
                     badGuys2.remove(bguy)
+                    currentEnemy -= 1
+                    killScore += 1
             for bguy in badGuys3[:]:
                 eRect=enemyRect(bguy)
                 if eRect.collidepoint(shot[X], shot[Y]) and shot not in killlist:
@@ -335,6 +356,8 @@ def moveShotgun(shotgunList):   #does the exact same thing as moveShots but spec
                     killlist.append(shot)
                     if bguy[3]<=0:
                         badGuys3.remove(bguy)
+                        currentEnemy -= 1
+                        killScore += 3
                         badshots = []
             for boss in Boss:
                 bossrect = bossRect(boss)
@@ -412,28 +435,37 @@ def enemyRect(bguy): #makes a rect around bguy
     eRect = Rect(bguy[0]+35, bguy[1]+35, 40, 40)
     return eRect
 
+
 def checkHit(rect):     #checks if an enemey hits player, so enemies coordinates can be added
     global bombs        #to the bombs list
     global currentHealth
     global badGuys
     global badGuys2
+    global currentEnemy
+    global killScore
     for bguy in badGuys: #if a bguy from badGuys hits player, the coordinates are added to bomb list
         if rect.collidepoint(bguy[0]+35, bguy[1]+35):
             currentHealth -= 10 #subtracts 10 health if bomb goes boomb
             badGuys.remove(bguy) #enemies are suicide bombers, so they die too
             bombs.append([bguy[0], bguy[1],0,0])
+            currentEnemy -= 1
+            killScore += 2
     for bguy in badGuys2: #same as previous loop but with badGuys2
         if rect.collidepoint(bguy[0]+35, bguy[1]+35):
             currentHealth -= 10
             badGuys2.remove(bguy)
             bombs.append([bguy[0], bguy[1], 0, 0])
+            currentEnemy -= 1
+            killScore += 1
             return True
     return False
+
 
 def instaDeath(guyx,guyy,rect): #if guy collides with the boss, inst death (welcome to dark souls)
     global currentHealth
     if rect.collidepoint(guyx,guyy):
         currentHealth = 0
+
 
 def checkWinLevel(badGuys): #if all enemies in the room are dead, level is won
     if len(badGuys) == 0 and len(badGuys2) == 0 and len(badGuys3) == 0 and len(Boss) == 0:
@@ -612,41 +644,13 @@ def title():
         for evnt in event.get():
             if evnt.type == QUIT:
                 running = False
+
         screen.blit(titleBack, (0, 0))
         screen.blit(start, (425, 525))
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
         if startRect.collidepoint(mx, my) and mb[0] == 1:
-            return 'gameLoad'
-        display.flip()
-
-
-def gameLoad():
-    global running
-    gameLoadRunning = True
-    newRect = Rect(230, 525, 198, 45)
-    loadRect = Rect(595, 525, 198, 45)
-    backRect = Rect(0, 630, 150, 75)
-
-    while gameLoadRunning:
-        for evnt in event.get():
-            if evnt.type == QUIT:
-                running = False
-                gameLoadRunning = False
-
-        screen.blit(titleBack, (0, 0))
-        screen.blit(newButton, (230, 525))
-        screen.blit(loadButton, (595, 525))
-        screen.blit(back, (0, 630))
-
-        mx, my = mouse.get_pos()
-        mb = mouse.get_pressed()
-        if newRect.collidepoint(mx, my) and mb[0] == 1:
-            return 'menu'
-        if loadRect.collidepoint(mx, my) and mb[0] == 1:
             return 'load'
-        if backRect.collidepoint(mx, my) and mb[0] == 1:
-            return 'title'
         display.flip()
 
 
@@ -656,11 +660,16 @@ def load():
     global weapon
     global maxHealth
     global currentHealth
+    global saveFile
+    global saveSlot
+    global yesOrNo
+    yesOrNo = 'yes'
     loadRunning = True
-    backRect = Rect(0, 555, 150, 75)
-    save1 = Rect(435, 483, 160, 50)
-    save2 = Rect(435, 556, 160, 50)
-    save3 = Rect(435, 623, 160, 50)
+    backRect = Rect(0, 630, 150, 75)
+    save1 = Rect(650, 483, 275, 50)
+    save2 = Rect(650, 556, 275, 50)
+    save3 = Rect(650, 623, 275, 50)
+    explainRect = Rect(50, 540, 275, 150)
 
     while loadRunning:
         for evnt in event.get():
@@ -671,63 +680,88 @@ def load():
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
         screen.blit(titleBack, (0, 0))
-        screen.blit(back, (0, 555))
+        draw.rect(screen, yellow, save1, 2)
+        draw.rect(screen, yellow, save2, 2)
+        draw.rect(screen, yellow, save3, 2)
+        explainTxt = arialFont.render('Pick a Slot to Load or Restart', True, yellow)
+        screen.blit(explainTxt, (explainRect.x + 3, explainRect.y + 2))
+        screen.blit(back, (0, 630))
         myFiles = glob.glob('*.txt')
         if len(myFiles) >= 1:
-            screen.blit(campaignButton, (415, 480))
+            saveFile = myFiles[0]
+            saveFile = open(saveFile, 'r')
+            save = saveFile.read().split()
+            save1Pic = arialFont.render(save[0], True, yellow)
+            screen.blit(save1Pic, (save1.x + 3, save1.y + 2))
+            saveFile.close()
+            if save1.collidepoint(mx, my) and mb[0] == 1:
+                saveSlot = '#1.txt'
+                return 'overwrite'
         if len(myFiles) >= 2:
-            screen.blit(campaignButton, (415, 553))
-        if len(myFiles) == 3:
-            screen.blit(campaignButton, (415, 620))
-        if save1.collidepoint(mx, my) and mb[0] == 1:
-            saveFile = open(myFiles[0], 'r')
-            save = saveFile.read().split()
-            Class = save[0]
-            if save[0] == 'Scout':
-                maxHealth = 40
-            if save[0] == 'Marine':
-                maxHealth = 70
-            if save[0] == 'Tank':
-                maxHealth = 100
-            weapon = save[1]
-            currentHealth = int(save[2])
-            return save[3]
-        if save2.collidepoint(mx, my) and mb[0] == 1:
-            saveFile = open(myFiles[1], 'r')
-            save = saveFile.read().split()
-            Class = save[0]
-            if save[0] == 'Scout':
-                maxHealth = 40
-            if save[0] == 'Marine':
-                maxHealth = 70
-            if save[0] == 'Tank':
-                maxHealth = 100
-            weapon = save[1]
-            currentHealth = int(save[2])
-            return save[3]
-        if save3.collidepoint(mx, my) and mb[0] == 1:
-            saveFile = open(myFiles[2], 'r')
-            save = saveFile.read().split()
-            Class = save[0]
-            if save[0] == 'Scout':
-                maxHealth = 40
-            if save[0] == 'Marine':
-                maxHealth = 70
-            if save[0] == 'Tank':
-                maxHealth = 100
-            weapon = save[1]
-            currentHealth = int(save[2])
-            return save[3]
+            saveFile = myFiles[1]
+            saveFile = open(saveFile, 'r').read().split()
+            save2Pic = arialFont.render(saveFile[0], True, yellow)
+            screen.blit(save2Pic, (save2.x + 3, save2.y + 2))
+            if save2.collidepoint(mx, my) and mb[0] == 1:
+                saveSlot = '#2.txt'
+                return 'overwrite'
+        if len(myFiles) >= 3:
+            saveFile = myFiles[2]
+            saveFile = open(saveFile, 'r').read().split()
+            save3Pic = arialFont.render(saveFile[0], True, yellow)
+            screen.blit(save3Pic, (save3.x + 3, save3.y + 2))
+            if save3.collidepoint(mx, my) and mb[0] == 1:
+                saveSlot = '#3.txt'
+                return 'overwrite'
+
+        if save1.collidepoint(mx, my) and mb[0] == 1 and len(myFiles) < 1:
+            saveSlot = '#1.txt'
+            name = getName()
+            if name == '':
+                return
+            return 'classSelect'
+        if save2.collidepoint(mx, my) and mb[0] == 1 and len(myFiles) < 2:
+            saveSlot = '#2.txt'
+            name = getName()
+            if name == '':
+                return
+            return 'classSelect'
+        if save3.collidepoint(mx, my) and mb[0] == 1 and len(myFiles) < 3:
+            saveSlot = '#3.txt'
+            name = getName()
+            if name == '':
+                return
+            return 'classSelect'
         if backRect.collidepoint(mx, my) and mb[0] == 1:
-            return 'gameLoad'
+            return 'title'
         display.flip()
 
 
 def menu():
     global running
+    global saveFile
+    global Class
+    global weapon
+    global maxHealth
+    global currentHealth
+    global yesOrNo
     menuRunning = True
-    buttons = [Rect(420, 480, 190, 55), Rect(435, 553, 160, 45), Rect(435, 623, 160, 50)]
-    screens = ['classSelect', 'endless', 'instructions']
+    if yesOrNo == 'no':
+        save = open(saveSlot, 'r')
+        save = save.read().split()
+        Class = save[1]
+        if save[1] == 'Scout':
+            maxHealth = 40
+        if save[1] == 'Marine':
+            maxHealth = 70
+        if save[1] == 'Tank':
+            maxHealth = 100
+        weapon = save[2]
+        currentHealth = float(save[3])
+        screens = [save[4], 'endlessMode', 'instructions']
+    if yesOrNo == 'yes':
+        screens = ['room_1', 'endlessMode', 'instructions']
+    buttons = [Rect(415, 480, 200, 55), Rect(415, 553, 200, 45), Rect(375, 623, 300, 50)]
     backRect = Rect(0, 555, 150, 75)
 
     while menuRunning:
@@ -739,7 +773,7 @@ def menu():
         screen.blit(titleBack, (0, 0))
         screen.blit(campaignButton, (415, 480))
         screen.blit(endlessButton, (415, 553))
-        screen.blit(instructionsButton, (415, 620))
+        screen.blit(instructionsButton, (375, 620))
         screen.blit(back, (0, 555))
 
         mx, my = mouse.get_pos()
@@ -748,7 +782,7 @@ def menu():
             if b.collidepoint(mx, my) and mb[0] == 1:
                 return s
         if backRect.collidepoint(mx, my) and mb[0] == 1:
-            return 'title'
+            return 'classSelect'
         display.flip()
 
 
@@ -765,7 +799,7 @@ def classSelect():
     scoutRect = Rect(173, 390, 75, 75)
     marineRect = Rect(470, 390, 75, 75)
     tankRect = Rect(787, 390, 75, 75)
-    startRect = Rect(410, 555, 200, 75)
+    startRect = Rect(800, 630, 200, 75)
 
     while classSelectRunning:
         for evnt in event.get():
@@ -788,14 +822,14 @@ def classSelect():
         if scoutRect.collidepoint(mx, my) and mb[0] == 1:
             Class = 'Scout'
             weapon = 'Rifle'
-            maxHealth = 40
-            currentHealth = 40
+            maxHealth = 50
+            currentHealth = 50
         if Class == 'Scout':
             Range = 800
             speed = 7
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, scoutRect, 2)
-            screen.blit(start, (410, 555))
+            screen.blit(start, (800, 630))
             screen.blit(scoutInfo, (360, 200))
             screenBuff = screen.copy()
         if Class != 'Scout':
@@ -811,7 +845,7 @@ def classSelect():
             speed = 5
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, marineRect, 2)
-            screen.blit(start, (410, 555))
+            screen.blit(start, (800, 630))
             screen.blit(marineInfo, (360, 200))
             screenBuff = screen.copy()
         if Class != 'Marine':
@@ -827,25 +861,27 @@ def classSelect():
             speed = 3
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, tankRect, 2)
-            screen.blit(start, (410, 555))
+            screen.blit(start, (800, 630))
             screen.blit(tankInfo, (360, 200))
             screenBuff = screen.copy()
         if Class != 'Tank':
             screen.blit(screenBuff, (0, 0))
             screenBuff = screen.copy()
         if startRect.collidepoint(mx, my) and mb[0] == 1 and Class != '':
-            return 'room_1'
-        if backRect.collidepoint(mx, my) and mb[0] == 1:
             return 'menu'
+        if backRect.collidepoint(mx, my) and mb[0] == 1:
+            return 'load'
         display.flip()
 
-'''
+
 def endlessMode():
+    fadeIn()
     global running
     global Class
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
     global badGuys3
     global Wcrates
     global Mcrates
@@ -853,15 +889,24 @@ def endlessMode():
     global guyy
     global shots
     global shotgunList
+    global currentEnemy
+    global killScore
     endlessRunning = True
     shots = []
-    badGuys = [[100, 100, 0, 2]]
-    badGuys2 = [[]]
-    badGuys3 = [[400, 300, 0, 3], [100, 600, 0, 3]]
+    badGuys = [[50, 50, 0, 2], [150, 50, 0, 2], [250, 50, 0, 2], [350, 50, 0, 2], [450, 50, 0, 2], [550, 50, 0, 2],
+               [650, 50, 0, 2], [750, 50, 0, 2], [850, 50, 0, 2],
+               [950, 50, 0, 2]]
+    badGuys2 = []
+    badGuys3 = []
     Wcrates = []
+    Mcrates = []
     arrows = []
     builds = []
-    Mcrates = []
+    waves = 1
+    time = timer()
+    enemyCap = 40
+    currentEnemy = 10
+    killScore = 0
 
     while endlessRunning:
         for evnt in event.get():
@@ -876,6 +921,8 @@ def endlessMode():
 
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
+        screen.blit(back1, (0, 0))
+
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
             if weapon == 'Shotgun':
@@ -889,20 +936,144 @@ def endlessMode():
                 badshots.append(addBadShot(bguy, -ang, 10))
             moveBadShots(bguy, badshots)
 
+        timeCount = (timer() - time)
+        if waves <= 3:
+            speedDiff = 20
+        if waves > 3:
+            speedDiff = 15
+        if waves > 6:
+            speedDiff = 10
+        if waves > 9:
+            speedDiff = 5
+        if waves > 12:
+            speedDiff = 2
+        if timeCount >= speedDiff:
+            if waves <= 3:
+                badGuys.append([50, 50, 0, 2])
+                badGuys.append([100, 50, 0, 2])
+                badGuys.append([150, 50, 0, 2])
+                badGuys.append([200, 50, 0, 2])
+                badGuys.append([250, 50, 0, 2])
+                badGuys.append([300, 50, 0, 2])
+                badGuys.append([350, 50, 0, 2])
+                badGuys.append([400, 50, 0, 2])
+                badGuys.append([450, 50, 0, 2])
+                badGuys.append([500, 50, 0, 2])
+                currentEnemy += 10
+            if waves > 3 and currentEnemy < enemyCap:
+                badGuys.append([50, 50, 0, 2])
+                badGuys.append([100, 50, 0, 2])
+                badGuys.append([150, 50, 0, 2])
+                badGuys.append([200, 50, 0, 2])
+                badGuys.append([250, 50, 0, 2])
+                badGuys.append([300, 50, 0, 2])
+                badGuys.append([350, 50, 0, 2])
+                badGuys.append([400, 50, 0, 2])
+                badGuys.append([450, 50, 0, 2])
+                badGuys.append([500, 50, 0, 2])
+                badGuys.append([50, 150, 0, 2])
+                badGuys.append([200, 150, 0, 2])
+                badGuys.append([400, 150, 0, 2])
+                badGuys.append([600, 150, 0, 2])
+                badGuys.append([800, 150, 0, 2])
+                currentEnemy += 15
+            if waves > 6 and currentEnemy < enemyCap:
+                badGuys2.append([100, 150, 0])
+                badGuys2.append([300, 150, 0])
+                badGuys2.append([500, 150, 0])
+                badGuys2.append([700, 150, 0])
+                badGuys2.append([900, 150, 0])
+                currentEnemy += 5
+            if waves > 9 and currentEnemy < enemyCap:
+                badGuys3.append([25, 25, 0, 3])
+                badGuys3.append([920, 25, 0, 3])
+                currentEnemy += 2
+            if waves > 12 and currentEnemy < enemyCap:
+                badGuys3.append([25, 840, 0, 3])
+                badGuys3.append([920, 840, 0, 3])
+                currentEnemy += 2
+            waves += 1
+            time = (time + speedDiff)
+
         gunHeat -= 1
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'yourScore'
         myClock.tick(60)
-        blockMove([[Rect(50, 300, 250, 400), 50, 300, 300, 700]])
         display.flip()
-        win = checkWinLevel(badGuys)
 
+
+def yourScore():
+    global running
+    global killScore
+    highscoreRunning = True
+    backRect = Rect(0, 630, 150, 75)
+    finalScore = str(killScore)
+    textArea = Rect(375, 325, 275, 50)
+
+    while highscoreRunning:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                highscoreRunning = False
+
+        mx, my = mouse.get_pos()
+        mb = mouse.get_pressed()
+        screen.blit(classBack, (0, 0))
+        screen.blit(back, (0, 630))
+        txtPic = arialFont.render('Your Score Was ' + finalScore, True, yellow)
+        screen.blit(txtPic, (textArea.x + 3, textArea.y + 2))
+        if backRect.collidepoint(mx, my) and mb[0] == 1:
+            return 'menu'
         display.flip()
-    return 'menu'
-'''
+
+
+def overwrite():
+    global running
+    global saveName
+    global yesOrNo
+    overwriteRunning = True
+    backRect = Rect(0, 555, 150, 75)
+    yesRect = Rect(270, 556, 100, 50)
+    noRect = Rect(670, 556, 100, 50)
+    overwriteRect = Rect(360, 250, 100, 50)
+
+    while overwriteRunning:
+        for evnt in event.get():
+            if evnt.type == QUIT:
+                running = False
+                overwriteRunning = False
+
+        mx, my = mouse.get_pos()
+        mb = mouse.get_pressed()
+        screen.blit(classBack, (0, 0))
+        screen.blit(back, (0, 555))
+        overwriteTxt = arialFont.render('Overwrite This File?', True, yellow)
+        screen.blit(overwriteTxt, (overwriteRect.x + 3, overwriteRect.y + 2))
+        yesTxt = arialFont.render('Yes', True, yellow)
+        screen.blit(yesTxt, (yesRect.x + 3, yesRect.y + 2))
+        noTxt = arialFont.render('No', True, yellow)
+        screen.blit(noTxt, (noRect.x + 3, noRect.y + 2))
+        if yesRect.collidepoint(mx, my) and mb[0] == 1:
+            yesOrNo = 'yes'
+            saveWrite = open('#1.txt', 'w')
+            saveWrite.close()
+            name = getName()
+            if name == '':
+                return
+            return 'classSelect'
+        if noRect.collidepoint(mx, my) and mb[0] == 1:
+            yesOrNo = 'no'
+            return 'menu'
+        if backRect.collidepoint(mx, my) and mb[0] == 1:
+            return 'load'
+        display.flip()
+
 
 def instructions():
     global running
@@ -931,6 +1102,13 @@ def instructions():
 
 def pause():
     global running
+    global saveName
+    global Class
+    global weapon
+    global currentHealth
+    global lastRoom
+    global newFile
+    global saveSlot
     pauseRunning = True
     resumeRect = Rect(425, 225, 175, 50)
     saveQuitRect = Rect(375, 325, 275, 50)
@@ -949,24 +1127,66 @@ def pause():
         image.set_alpha(150)
         screen.blit(image, (0, 0))
         screen.blit(resume, (425, 225))
-        if page != 'endless':
+        if page != 'endlessMode':
             screen.blit(saveQuit, (375, 325))
         screen.blit(quitButton, (462, 425))
-        print(page)
         display.flip()
-        '''
-        if page == 'endless':
+        if page == 'endlessMode':
             if resumeRect.collidepoint(mx, my) and mb[0] == 1:
                 pauseRunning = False
             if quitRect.collidepoint(mx, my) and mb[0] == 1:
                 return 'menu'
-        '''
-        if resumeRect.collidepoint(mx, my) and mb[0] == 1:
-            pauseRunning = False
-        if saveQuitRect.collidepoint(mx, my) and mb[0] == 1:
-            return 'menu'
-        if quitRect.collidepoint(mx, my) and mb[0] == 1:
-            return 'menu'
+        else:
+            if resumeRect.collidepoint(mx, my) and mb[0] == 1:
+                pauseRunning = False
+            if saveQuitRect.collidepoint(mx, my) and mb[0] == 1:
+                newFile = open(saveSlot, 'w')
+                newFile.write('''
+%s
+%s
+%s
+%s
+%s'''%(saveName, Class, weapon, currentHealth, lastRoom))
+                newFile.close()
+                return 'menu'
+            if quitRect.collidepoint(mx, my) and mb[0] == 1:
+                quit()
+
+
+def getName():
+    global saveName
+    arialFont = font.SysFont("Times New Roman", 36)
+    textArea = Rect(375, 325, 275, 50)  # make changes here
+
+    typing = True
+
+    while typing:
+        screen.blit(classBack, (0, 0))
+        print(saveSlot)
+        for e in event.get():
+            if e.type == QUIT:
+                event.post(e)  # puts QUIT back in event list so main quits
+                return ""
+            if e.type == KEYDOWN:
+                if e.key == K_ESCAPE:
+                    typing = False
+                    saveName = ""
+                elif e.key == K_BACKSPACE:  # remove last letter
+                    if len(saveName) > 0:
+                        saveName = saveName[:-1]
+                elif e.key == K_KP_ENTER or e.key == K_RETURN:
+                    typing = False
+                    return saveName
+                elif e.key < 256:
+                    saveName += e.unicode  # add character to ans
+                    if len(saveName) > 10:
+                        saveName = saveName[:-1]
+
+        draw.rect(screen, (186, 85, 211), textArea)           # draw the text window and the text.
+        draw.rect(screen, (0, 0, 0), textArea, 2)             #
+        txtPic = arialFont.render(saveName, True, (0, 0, 0))
+        screen.blit(txtPic, (textArea.x + 3, textArea.y + 2))
+        display.flip()
 
 
 def blockMove(image): #stops guy from walking on space ships and junk pictures so they are like obtacles
@@ -997,6 +1217,8 @@ def room_1():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_1'
     shots = [] #shots is reset when you enter the room so old shots from the last room dont carry in
     room_1Running = True
     #all enemies are specific to each room so they are defined in each room
@@ -1063,6 +1285,8 @@ def room_2():
     global shots
     global shotgunList
     global badguys3
+    global lastRoom
+    lastRoom = 'room_2'
     shots = []
     shotgunList = []
     room_2Running = True
@@ -1140,6 +1364,8 @@ def room_3():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_3'
     shots = []
     shotgunList = []
     room_3Running = True
@@ -1209,6 +1435,8 @@ def room_4():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_4'
     shots = []
     shotgunList = []
     room_4Running = True
@@ -1285,6 +1513,8 @@ def room_5():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_5'
     shots = []
     shotgunList = []
     room_5Running = True
@@ -1366,6 +1596,8 @@ def room_6():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_6'
     shots = []
     shotgunList = []
     room_6Running = True
@@ -1451,6 +1683,8 @@ def room_7():
     global badGuys2
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_7'
     shots = []
     shotgunList = []
     room_7Running = True
@@ -1530,6 +1764,8 @@ def room_8():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_8'
     shots = []
     shotgunList = []
     room_8Running = True
@@ -1610,6 +1846,8 @@ def room_9():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_9'
     shots = []
     shotgunList = []
     room_9Running = True
@@ -1693,6 +1931,8 @@ def room_10():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_10'
     shots = []
     shotgunList = []
     room_10Running = True
@@ -1779,6 +2019,8 @@ def room_11():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_11'
     shots = []
     shotgunList = []
     room_11Running = True
@@ -1854,6 +2096,8 @@ def room_12():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_12'
     shots = []
     shotgunList = []
     room_12Running = True
@@ -1925,6 +2169,8 @@ def room_13():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_13'
     shots = []
     shotgunList = []
     room_13Running = True
@@ -1997,6 +2243,8 @@ def room_1B():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_1B'
     shots = []
     shotgunList = []
     room_1BRunning = True
@@ -2071,6 +2319,8 @@ def room_2B():
     global guyy
     global shots
     global shotgunList
+    global lastRoom
+    lastRoom = 'room_2B'
     shots = []
     shotgunList = []
     room_2BRunning = True
@@ -2153,6 +2403,8 @@ def room_3B():
     global shots
     global shotgunList
     global Boss
+    global lastRoom
+    lastRoom = 'room_3B'
     shots = []
     Boss = [[512, 0, 0, 50]]
     shotgunList = []
@@ -2217,24 +2469,24 @@ def room_3B():
     return 'title'
 
 
-page = 'room_3B'
+page = 'title'
 while page != 'exit':
     mixer.music.set_volume(.7)
     mixer.music.play(-1)
     if page == 'title':
         page = title()
-    if page == 'menu':
-        page = menu()
-    if page == 'gameLoad':
-        page = gameLoad()
     if page == 'load':
         page = load()
-    #if page == 'endlesss':
-        #page == endless()
+    if page == 'overwrite':
+        page = overwrite()
     if page == 'classSelect':
         page = classSelect()
-    #if page == 'endlessMode':
-        #page = endlessMode()
+    if page == 'menu':
+        page = menu()
+    if page == 'endlessMode':
+        page = endlessMode()
+    if page == 'yourScore':
+        page = yourScore()
     if page == 'instructions':
         page = instructions()
     if page == 'room_1':

@@ -1,4 +1,0 @@
-Class Scout
-Weapon Rifle
-Health 3
-Room 1

@@ -1,4 +1,0 @@
-Class Marine
-Weapon Rifle
-Health 5
-Room 1
