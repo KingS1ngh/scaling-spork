@@ -546,6 +546,8 @@ def drawScene(badGuys, badGuys2, arrows, back, builds): #actually blits and draw
     screen.blit(pic, (guyx - 17, guyy - 17)) #actually blits the guy after make necessary alterations
     shoot2 = image.load("Pictures/redbullet.png").convert()#the image of the bullet to be shot
     shoot2 = transform.scale(shoot2, (7, 7)) #resizes the bullet so it looks like bullet instead of a giant ball
+    pshot = image.load('Pictures/greenbullet.png')
+    pshot = transform.scale(pshot, (12,12))
 
     for crate in Wcrates: #blits the weapon crates in Wcrates list
         weaponcrate = transform.scale(crat, (40,60))
@@ -561,7 +563,10 @@ def drawScene(badGuys, badGuys2, arrows, back, builds): #actually blits and draw
             for shot in s:
                 screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
     for shot in shots[:]:   #draws all of the bullets in shots
-        screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
+        if weapon == 'Plasma':
+            screen.blit(pshot,(int(shot[X]), int(shot[Y])))
+        else:
+            screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
 
     for shot in badshots[:]: #draws all of the shots shot by badGuys3
         screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
@@ -602,7 +607,7 @@ def drawScene(badGuys, badGuys2, arrows, back, builds): #actually blits and draw
     healthRect = goodHealthMeter(currentHealth)
     draw.rect(screen, (0, 255, 0), healthRect)  #draws the health bar
     healthArea = Rect(10,30,100,100)    #the place to blit "health" and current health/max health
-    weaponArea = Rect(900,10,200,50)    #the place to blit current weapon
+    weaponArea = Rect(850,10,200,50)    #the place to blit current weapon
     weaponText = arialFont2.render("Weapon:"+weapon,True,(255,0,0)) #what will be written
     healthPic = arialFont2.render('Health:%s/%s'%(str(currentHealth),str(maxHealth)),True,(0,255,0))   #what will be written fro health
     screen.blit(healthPic,(healthArea.x+3,healthArea.y+2)) #blitting health words to screen
@@ -926,7 +931,8 @@ def endlessMode():
 
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(
                     shotgun(-angle - 90, -angle - (90 + randint(0, 10)), -angle - (90 - randint(0, 10)), power))
             else:
@@ -996,7 +1002,8 @@ def endlessMode():
             waves += 1
             time = (time + speedDiff)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -1225,9 +1232,9 @@ def room_1():
     #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,100,0,2]]
     Wcrates=[] #if there are any crates in the room they would be listed in the Wcrates list in each room function
-    arrows = [up] #draws an arrow in the specified location(s) and lead to other rooms
+    arrows = [up] #draws an arrow in the specified location(s) and arrows lead to other rooms
     builds = [[ship9, 50, 300]] #list of buildings that need to be drawn. specific to each room
-    Mcrates = [] #same a Wcrates
+    Mcrates = [] #same a Wcrates but is list of Med crates
 
     while room_1Running:
         for evnt in event.get():
@@ -1255,6 +1262,7 @@ def room_1():
             moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1 #since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -1273,7 +1281,7 @@ def room_1():
 
 
 def room_2():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -1288,14 +1296,15 @@ def room_2():
     global badguys3
     global lastRoom
     lastRoom = 'room_2'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_2Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2],[300,20,0,2]]
-    Wcrates=[]
-    arrows = [up,right,left,down]
-    builds = [[build2, 100, 100]]
-    Mcrates = []
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up,right,left,down]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[build2, 100, 100]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_2Running:
         for evnt in event.get():
@@ -1311,17 +1320,19 @@ def room_2():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -1353,7 +1364,7 @@ def room_2():
 
 
 def room_3():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -1367,14 +1378,15 @@ def room_3():
     global shotgunList
     global lastRoom
     lastRoom = 'room_3'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_3Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
-    Wcrates=[]
-    arrows = [up, right]
-    builds = [[ship8, 650, 50]]
-    Mcrates = [[150,550]]
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up, right]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[ship8, 650, 50]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = [[150,550]]#same a Wcrates but is list of Med crates
 
     while room_3Running:
         for evnt in event.get():
@@ -1390,17 +1402,19 @@ def room_3():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -1424,7 +1438,7 @@ def room_3():
 
 
 def room_4():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -1438,14 +1452,15 @@ def room_4():
     global shotgunList
     global lastRoom
     lastRoom = 'room_4'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_4Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[140,600,0,2],[10,250,0,2],[200,400,0,2],[900,320,0,2],[820,350,0,2]]
-    Wcrates=[[100,600,1]]
-    arrows = [up, left]
-    builds = [[junk1, 175, 145], [junk2, 550, 480], [junk3, 750, 200]]
-    Mcrates = []
+    Wcrates=[[100,600,1]]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up, left]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[junk1, 175, 145], [junk2, 550, 480], [junk3, 750, 200]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_4Running:
         for evnt in event.get():
@@ -1465,17 +1480,19 @@ def room_4():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -1501,7 +1518,7 @@ def room_4():
 
 
 def room_5():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -1516,15 +1533,16 @@ def room_5():
     global shotgunList
     global lastRoom
     lastRoom = 'room_5'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_5Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,700,0,2],[10,500,0,2],[500,450,0,2]]
     badGuys2 = [[200,200,0],[300,100,0]]
-    Wcrates=[]
-    arrows = [up, right, down]
-    builds = [[junk4, 150, 100], [junk5, 275, 500], [junk6, 600, 150]]
-    Mcrates = []
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up, right, down]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[junk4, 150, 100], [junk5, 275, 500], [junk6, 600, 150]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_5Running:
         for evnt in event.get():
@@ -1544,17 +1562,19 @@ def room_5():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -1584,7 +1604,7 @@ def room_5():
 
 
 def room_6():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -1599,15 +1619,16 @@ def room_6():
     global shotgunList
     global lastRoom
     lastRoom = 'room_6'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_6Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2 = [[300,700,0],[900,100,0]]
-    Wcrates=[]
-    arrows = [up,right,left,down]
-    builds = [[ship7, 200, 150]]
-    Mcrates = [[850,150]]
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up,right,left,down]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[ship7, 200, 150]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = [[850,150]]#same a Wcrates but is list of Med crates
 
     while room_6Running:
         for evnt in event.get():
@@ -1627,17 +1648,19 @@ def room_6():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -1671,7 +1694,7 @@ def room_6():
 
 
 def room_7():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -1686,15 +1709,16 @@ def room_7():
     global shotgunList
     global lastRoom
     lastRoom = 'room_7'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_7Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2=[[200,400,0],[500,100,0],[400,600,0]]
-    Wcrates=[]
-    arrows = [up,left,down]
-    builds = [[ship4, 300, 150]]
-    Mcrates = []
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up,left,down]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[ship4, 300, 150]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_7Running:
         for evnt in event.get():
@@ -1714,17 +1738,19 @@ def room_7():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -1752,7 +1778,7 @@ def room_7():
 
 
 def room_8():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -1767,15 +1793,16 @@ def room_8():
     global shotgunList
     global lastRoom
     lastRoom = 'room_8'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_8Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,300,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2 = [[123,342,0],[234,523,0]]
-    Wcrates=[[100,600,2]]
-    arrows = [up,right,down]
-    builds = [[junk3, 200, 225], [ship5, 650, 50]]
-    Mcrates = []
+    Wcrates=[[100,600,2]]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up,right,down]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[junk3, 200, 225], [ship5, 650, 50]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_8Running:
         for evnt in event.get():
@@ -1795,17 +1822,19 @@ def room_8():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -1834,7 +1863,7 @@ def room_8():
 
 
 def room_9():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -1849,15 +1878,16 @@ def room_9():
     global shotgunList
     global lastRoom
     lastRoom = 'room_9'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_9Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2 = [[234,453,0],[455,243,0],[543,244,0]]
-    Wcrates=[]
-    arrows = [up,right,left,down]
-    builds = [[build3, 250, 75]]
-    Mcrates = []
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up,right,left,down]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[build3, 250, 75]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_9Running:
         for evnt in event.get():
@@ -1877,17 +1907,19 @@ def room_9():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -1919,7 +1951,7 @@ def room_9():
 
 
 def room_10():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -1934,17 +1966,18 @@ def room_10():
     global shotgunList
     global lastRoom
     lastRoom = 'room_10'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_10Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2 = [[randint(0,1024),randint(0,700),0],
                 [randint(0,1024),randint(0,700),0],
                 [randint(0,1024),randint(0,700),0]]
-    Wcrates=[]
-    arrows = [up,left,down]
-    builds = [[build5, 125, 150], [build5, 175, 400], [build5, 420, 250], [build5, 600, 180], [build5, 620, 500]]
-    Mcrates = []
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up,left,down]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[build5, 125, 150], [build5, 175, 400], [build5, 420, 250], [build5, 600, 180], [build5, 620, 500]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_10Running:
         for evnt in event.get():
@@ -1964,17 +1997,19 @@ def room_10():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -2007,7 +2042,7 @@ def room_10():
 
 
 def room_11():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -2022,14 +2057,15 @@ def room_11():
     global shotgunList
     global lastRoom
     lastRoom = 'room_11'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_11Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys2=[[100,600,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
-    Wcrates=[]
-    arrows = [down, hole]
-    builds = [[build4, 200, 150], [build4, 650, 200]]
-    Mcrates = []
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [down, hole]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[build4, 200, 150], [build4, 650, 200]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_11Running:
         for evnt in event.get():
@@ -2049,17 +2085,19 @@ def room_11():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -2084,7 +2122,7 @@ def room_11():
 
 
 def room_12():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -2099,14 +2137,15 @@ def room_12():
     global shotgunList
     global lastRoom
     lastRoom = 'room_12'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_12Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys2=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
-    Wcrates=[]
-    arrows = [down]
-    builds = [[build5, 200, 300], [build1, 825, -75]]
-    Mcrates = [[550, 200]]
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [down]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[build5, 200, 300], [build1, 825, -75]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = [[550, 200]]#same a Wcrates but is list of Med crates
 
     while room_12Running:
         for evnt in event.get():
@@ -2126,17 +2165,19 @@ def room_12():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -2157,7 +2198,7 @@ def room_12():
 
 
 def room_13():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -2172,14 +2213,15 @@ def room_13():
     global shotgunList
     global lastRoom
     lastRoom = 'room_13'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_13Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys2=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
-    Wcrates=[[900,100,3]]
-    arrows = [down]
-    builds = [[build5, 400, 275], [ship6, -250, -50]]
-    Mcrates = []
+    Wcrates=[[900,100,3]]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [down]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = [[build5, 400, 275], [ship6, -250, -50]]#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_13Running:
         for evnt in event.get():
@@ -2199,17 +2241,19 @@ def room_13():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -2230,7 +2274,7 @@ def room_13():
 
 
 def room_1B():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global badGuys2
     global badGuys3
     global running
@@ -2246,16 +2290,17 @@ def room_1B():
     global shotgunList
     global lastRoom
     lastRoom = 'room_1B'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_1BRunning = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2=[[100,100,0],[500,400,0]]
     badGuys3 = [[20,20,0,3],[900,20,0,3]]
-    Wcrates=[]
-    arrows = [up]
-    builds = []
-    Mcrates = []
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = []#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_1BRunning:
         for evnt in event.get():
@@ -2275,17 +2320,19 @@ def room_1B():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -2306,7 +2353,7 @@ def room_1B():
 
 
 def room_2B():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -2322,19 +2369,20 @@ def room_2B():
     global shotgunList
     global lastRoom
     lastRoom = 'room_2B'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     shotgunList = []
     room_2BRunning = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2 = [[randint(0,1024),randint(0,700),0],
                 [randint(0,1024),randint(0,700),0],
                 [randint(0,1024),randint(0,700),0],
                 [randint(0,1024),randint(0,700),0]]
     badGuys3 = [[20,20,0,3],[900,20,0,3]]
-    Wcrates=[]
-    arrows = [up]
-    builds = []
-    Mcrates = []
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up]#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = []#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_2BRunning:
         for evnt in event.get():
@@ -2354,17 +2402,19 @@ def room_2B():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
@@ -2389,7 +2439,7 @@ def room_2B():
 
 
 def room_3B():
-    fadeIn()
+    fadeIn()#when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -2406,19 +2456,20 @@ def room_3B():
     global Boss
     global lastRoom
     lastRoom = 'room_3B'
-    shots = []
+    shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
     Boss = [[512, 0, 0, 50]]
     shotgunList = []
     room_3BRunning = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2 = [[randint(0,1024),randint(0,700),0],
                 [randint(0,1024),randint(0,700),0],
                 [randint(0,1024),randint(0,700),0]]
     badGuys3 = [[20,20,0,3],[900,20,0,3],[20,600,0,3],[900,600,0,3]]
-    Wcrates=[]
-    arrows = []
-    builds = []
-    Mcrates = []
+    Wcrates=[]#if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = []#draws an arrow in the specified location(s) and arrows lead to other rooms
+    builds = []#list of buildings that need to be drawn. specific to each room
+    Mcrates = []#same a Wcrates but is list of Med crates
 
     while room_3BRunning:
         for evnt in event.get():
@@ -2438,13 +2489,14 @@ def room_3B():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun':#since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:
+            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
         for b in Boss:
@@ -2453,7 +2505,8 @@ def room_3B():
             moveBadShots(b ,bossshots,20)
             bossrect = bossRect(b)
             instaDeath(guyx,guyy,bossrect)
-        gunHeat -= 1
+        gunHeat -= 1#since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
+        #CALLING FUNCTIONS#
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
