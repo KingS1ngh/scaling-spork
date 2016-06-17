@@ -650,6 +650,14 @@ def fadeIn():
         screen.blit(image, (0, 0))
         display.flip()
 
+def lightFade():
+    image = screen.copy().convert()
+    for i in range(255):
+        screen.fill((255,255,255))
+        image.set_alpha(i)
+        screen.blit(image,(0,0))
+        display.flip()
+
 def title(): #beginning 'slide' of the program
     global running #running is global, every slide has running to operate entire program
     startRect = Rect(422, 525, 200, 75)
@@ -752,6 +760,7 @@ def load(): #slide that allows you to start a new game or load an old game
 
 
 def menu(): #main menu of code, you can play campaign, endless, or read instructions
+    fadeIn()
     global running
     global saveFile
     global Class
@@ -959,7 +968,7 @@ def endlessMode(): #runs endless mode, enemies respawn continually faster and in
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0, 50) == 1:
+            if randint(0, 200) == 1:
                 badshots.append(addBadShot(bguy, -ang, 10))
             moveBadShots(bguy, badshots)
 
@@ -1031,6 +1040,7 @@ def endlessMode(): #runs endless mode, enemies respawn continually faster and in
         moveGuy(guyx, guyy)
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'yourScore'
         myClock.tick(60)
         display.flip()
@@ -1277,7 +1287,7 @@ def room_1():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1: #has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1: #has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -1294,6 +1304,7 @@ def room_1():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -1351,7 +1362,7 @@ def room_2():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -1368,6 +1379,7 @@ def room_2():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -1436,7 +1448,7 @@ def room_3():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -1453,6 +1465,7 @@ def room_3():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -1517,7 +1530,7 @@ def room_4():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -1536,6 +1549,7 @@ def room_4():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -1602,7 +1616,7 @@ def room_5():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -1621,6 +1635,7 @@ def room_5():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -1691,7 +1706,7 @@ def room_6():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -1710,6 +1725,7 @@ def room_6():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -1784,7 +1800,7 @@ def room_7():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -1801,6 +1817,7 @@ def room_7():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -1871,7 +1888,7 @@ def room_8():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -1889,6 +1906,7 @@ def room_8():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -1959,7 +1977,7 @@ def room_9():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -1976,6 +1994,7 @@ def room_9():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -2052,7 +2071,7 @@ def room_10():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -2074,6 +2093,7 @@ def room_10():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -2143,7 +2163,7 @@ def room_11():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -2226,7 +2246,7 @@ def room_12():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -2244,6 +2264,7 @@ def room_12():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -2305,7 +2326,7 @@ def room_13():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -2323,6 +2344,7 @@ def room_13():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -2387,7 +2409,7 @@ def room_1B():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -2405,6 +2427,7 @@ def room_1B():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -2472,7 +2495,7 @@ def room_2B():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
 
@@ -2490,6 +2513,7 @@ def room_2B():
 
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         win = checkWinLevel(badGuys)
         if win:
@@ -2562,7 +2586,7 @@ def room_3B():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,100)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
+            if randint(0,200)==1:#has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
             moveBadShots(bguy,badshots,10)
         for b in Boss:
@@ -2581,6 +2605,7 @@ def room_3B():
             return 'menu'
         lose = checkLoseLevel(currentHealth)
         if lose:
+            lightFade()
             return 'menu'
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
