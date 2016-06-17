@@ -29,8 +29,8 @@ mx, my = mouse.get_pos()    #gets x and y position of mouse
 mb = mouse.get_pressed()    #used to check if left click
 Class = 'Scout' #setting variable for class, player will be allowed to pick during class select
 weapon = 'Rifle'    #weapon being used, will change based on class and powerups
-currentHealth = 40  #set for scout class, but will change according to class selected #is the current health of player
-maxHealth = 40  #player max health, so health cant extend more than max after getting healing pack
+currentHealth = 50  #set for scout class, but will change according to class selected #is the current health of player
+maxHealth = 50  #player max health, so health cant extend more than max after getting healing pack
 saveName = '' #the variable for the name of the save files the player sets
 saveFile = '' #variable for globed txt files in load
 yesOrNo = 'yes' #tells menu whether or not to load a txt file depending on your last function open
@@ -61,7 +61,8 @@ leftRect = Rect(5, 335, 80, 30)
 downRect = Rect(497, 605, 30, 80)
 holeRect = Rect(487, 325, 50, 50)    #rect for hole that leads to the boss rooms
 #----------Pictures being Loaded------------#
-
+#convert_alpha() was found on pygame website
+#loading images
 titleScreen = image.load('Pictures/Title Screen.png').convert()
 titleBack = transform.scale(titleScreen, (1035, 800))
 
@@ -181,7 +182,13 @@ junk4 = image.load('Pictures/Junk 4.png').convert_alpha()
 junk5 = image.load('Pictures/Junk 5.png').convert_alpha()
 junk5 = transform.rotate(junk5, (90))
 junk6 = image.load('Pictures/Junk 6.png').convert_alpha()
+
+winPic = image.load('Pictures/victory.png').convert_alpha()
+winPic = transform.scale(winPic, (300, 100))
+losePic = image.load('Pictures/Game Over.png').convert_alpha()
+losePic = transform.scale(losePic, (200, 200))
 speed = 5   #speed for player movement (changes based on class
+Range = 800
 
 mixer.init()    #initialized the music system
 mixer.music.load("Music/Ambient Space Music.mp3")   #background music file loaded
@@ -477,6 +484,7 @@ def checkWinLevel(badGuys): #if all enemies in the room are dead, level is won
 def checkLoseLevel(health): #if you have 0 health, you die and lose the game
     if health <= 0:
         return True
+    return False
 
 
 def checkUpgrade(Wcrates, Mcrates, guyx, guyy): #checks if any crate is collided with, and gives powerup accordingly
@@ -630,7 +638,7 @@ def drawScene(badGuys, badGuys2, arrows, back, builds): #actually blits and draw
 
     lose = checkLoseLevel(currentHealth) #if health is 0 you lose the level
     if lose:
-        screen.fill((0, 0, 0))
+        return 'menu'
     display.flip()
 
 
@@ -642,8 +650,8 @@ def fadeIn():
         screen.blit(image, (0, 0))
         display.flip()
 
-def title():
-    global running
+def title(): #beginning 'slide' of the program
+    global running #running is global, every slide has running to operate entire program
     startRect = Rect(422, 525, 200, 75)
 
     while running:
@@ -655,12 +663,12 @@ def title():
         screen.blit(start, (425, 525))
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
-        if startRect.collidepoint(mx, my) and mb[0] == 1:
-            return 'load'
+        if startRect.collidepoint(mx, my) and mb[0] == 1: #if you click the start button
+            return 'load' #returns to next slide
         display.flip()
 
 
-def load():
+def load(): #slide that allows you to start a new game or load an old game
     global running
     global Class
     global weapon
@@ -669,7 +677,7 @@ def load():
     global saveFile
     global saveSlot
     global yesOrNo
-    yesOrNo = 'yes'
+    yesOrNo = 'yes' #used in menu
     loadRunning = True
     backRect = Rect(0, 630, 150, 75)
     save1 = Rect(650, 483, 275, 50)
@@ -689,21 +697,21 @@ def load():
         draw.rect(screen, yellow, save1, 2)
         draw.rect(screen, yellow, save2, 2)
         draw.rect(screen, yellow, save3, 2)
-        explainTxt = arialFont.render('Pick a Slot to Load or Restart', True, yellow)
-        screen.blit(explainTxt, (explainRect.x + 3, explainRect.y + 2))
+        explainTxt = arialFont.render('Pick a Slot to Load or Restart', True, yellow) #creates text
+        screen.blit(explainTxt, (explainRect.x + 3, explainRect.y + 2)) #blits test onto screen
         screen.blit(back, (0, 630))
-        myFiles = glob.glob('*.txt')
-        if len(myFiles) >= 1:
-            saveFile = myFiles[0]
+        myFiles = glob.glob('*.txt') #puts all save files in a list called myFiles
+        if len(myFiles) >= 1: #each if len statement for myFiles only lets the program render the saveName
+            saveFile = myFiles[0] #saveFile == first file
             saveFile = open(saveFile, 'r')
             save = saveFile.read().split()
-            save1Pic = arialFont.render(save[0], True, yellow)
-            screen.blit(save1Pic, (save1.x + 3, save1.y + 2))
+            save1Pic = arialFont.render(save[0], True, yellow) #save[0] is the saveName the user inputs
+            screen.blit(save1Pic, (save1.x + 3, save1.y + 2)) #blit saveName
             saveFile.close()
             if save1.collidepoint(mx, my) and mb[0] == 1:
-                saveSlot = '#1.txt'
+                saveSlot = '#1.txt' #this makes sure no matter what saveName is entered it always saves to the same file
                 return 'overwrite'
-        if len(myFiles) >= 2:
+        if len(myFiles) >= 2: #same logic as len >= 1
             saveFile = myFiles[1]
             saveFile = open(saveFile, 'r').read().split()
             save2Pic = arialFont.render(saveFile[0], True, yellow)
@@ -711,7 +719,7 @@ def load():
             if save2.collidepoint(mx, my) and mb[0] == 1:
                 saveSlot = '#2.txt'
                 return 'overwrite'
-        if len(myFiles) >= 3:
+        if len(myFiles) >= 3: #same logic as len >= 1
             saveFile = myFiles[2]
             saveFile = open(saveFile, 'r').read().split()
             save3Pic = arialFont.render(saveFile[0], True, yellow)
@@ -720,30 +728,30 @@ def load():
                 saveSlot = '#3.txt'
                 return 'overwrite'
 
-        if save1.collidepoint(mx, my) and mb[0] == 1 and len(myFiles) < 1:
+        if save1.collidepoint(mx, my) and mb[0] == 1 and len(myFiles) < 1: #if there isnt a save file in this slot
             saveSlot = '#1.txt'
-            name = getName()
+            name = getName() #allows user to enter name for new slot
             if name == '':
                 return
             return 'classSelect'
-        if save2.collidepoint(mx, my) and mb[0] == 1 and len(myFiles) < 2:
+        if save2.collidepoint(mx, my) and mb[0] == 1 and len(myFiles) < 2: #if there isnt a save file in this slot
             saveSlot = '#2.txt'
-            name = getName()
+            name = getName() #allows user to enter name for new slot
             if name == '':
                 return
             return 'classSelect'
-        if save3.collidepoint(mx, my) and mb[0] == 1 and len(myFiles) < 3:
+        if save3.collidepoint(mx, my) and mb[0] == 1 and len(myFiles) < 3: #if there isnt a save file in this slot
             saveSlot = '#3.txt'
-            name = getName()
+            name = getName() #allows user to enter name for new slot
             if name == '':
                 return
             return 'classSelect'
         if backRect.collidepoint(mx, my) and mb[0] == 1:
-            return 'title'
+            return 'title' #slide before this one
         display.flip()
 
 
-def menu():
+def menu(): #main menu of code, you can play campaign, endless, or read instructions
     global running
     global saveFile
     global Class
@@ -751,23 +759,35 @@ def menu():
     global maxHealth
     global currentHealth
     global yesOrNo
+    global badGuys
+    global badGuys2
+    global badGuys3
     menuRunning = True
-    if yesOrNo == 'no':
+    if yesOrNo == 'no': #if the last slide set a file to open
         save = open(saveSlot, 'r')
         save = save.read().split()
-        Class = save[1]
+        Class = save[1]  #second save element
         if save[1] == 'Scout':
-            maxHealth = 40
+            maxHealth = 50
         if save[1] == 'Marine':
             maxHealth = 70
         if save[1] == 'Tank':
-            maxHealth = 100
-        weapon = save[2]
-        currentHealth = float(save[3])
-        screens = [save[4], 'endlessMode', 'instructions']
-    if yesOrNo == 'yes':
-        screens = ['room_1', 'endlessMode', 'instructions']
-    buttons = [Rect(415, 480, 200, 55), Rect(415, 553, 200, 45), Rect(375, 623, 300, 50)]
+            maxHealth = 90
+        weapon = save[2] #third save element
+        currentHealth = float(save[3]) #fourth save element
+        screens = [save[4], 'endlessMode', 'instructions'] #the functions that are returned when rects are clicked
+    if yesOrNo == 'yes': #if no file is available to open
+        screens = ['room_1', 'endlessMode', 'instructions'] #the functions that are returned when rects are clicked
+    if Class == 'Scout':   #if you die in campaign it returns the menu, these reset your health
+        currentHealth = 50 #
+    if Class == 'Marine':  #
+        currentHealth = 70 #
+    if Class == 'Tank':    #
+        currentHealth = 90 #
+    badGuys = []  #
+    badGuys2 = [] #resets enemies in case you died with enemies left
+    badGuys3 = [] #
+    buttons = [Rect(415, 480, 200, 55), Rect(415, 553, 200, 45), Rect(375, 623, 300, 50)] #list of button rects
     backRect = Rect(0, 555, 150, 75)
 
     while menuRunning:
@@ -784,9 +804,9 @@ def menu():
 
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
-        for b, s in zip(buttons, screens):
-            if b.collidepoint(mx, my) and mb[0] == 1:
-                return s
+        for b, s in zip(buttons, screens): #zip ties together rects and functions, ei b[1] returns s[1]
+            if b.collidepoint(mx, my) and mb[0] == 1: #buttons
+                return s #functions
         if backRect.collidepoint(mx, my) and mb[0] == 1:
             return 'classSelect'
         display.flip()
@@ -794,13 +814,13 @@ def menu():
 
 def classSelect():
     global running
-    classSelectRunning = True
     global Class
     global weapon
     global maxHealth
     global currentHealth
     global speed
     global Range
+    classSelectRunning = True
     backRect = Rect(0, 630, 150, 75)
     scoutRect = Rect(173, 390, 75, 75)
     marineRect = Rect(470, 390, 75, 75)
@@ -824,31 +844,31 @@ def classSelect():
         screen.blit(marineLable, (435, 475))
         screen.blit(tankLable, (775, 475))
         screen.blit(back, (0, 630))
-        screenBuff = screen.copy()
-        if scoutRect.collidepoint(mx, my) and mb[0] == 1:
-            Class = 'Scout'
-            weapon = 'Rifle'
-            maxHealth = 50
-            currentHealth = 50
-        if Class == 'Scout':
-            Range = 800
-            speed = 7
-            screen.blit(screenBuff, (0, 0))
+        screenBuff = screen.copy() #used to constantly update screen because when different class is selected different stats are blitted
+        if scoutRect.collidepoint(mx, my) and mb[0] == 1: #works like highlighting tools in the paint project
+            Class = 'Scout'     #
+            weapon = 'Rifle'    #
+            maxHealth = 50      #
+            currentHealth = 50  # class variables set
+        if Class == 'Scout':    #
+            Range = 800         #
+            speed = 7           #
+            screen.blit(screenBuff, (0, 0)) #blits last screencap
             draw.rect(screen, red, scoutRect, 2)
             screen.blit(start, (800, 630))
             screen.blit(scoutInfo, (360, 200))
             screenBuff = screen.copy()
         if Class != 'Scout':
-            screen.blit(screenBuff, (0, 0))
+            screen.blit(screenBuff, (0, 0)) #takes away screencap
             screenBuff = screen.copy()
-        if marineRect.collidepoint(mx, my) and mb[0] == 1:
-            Class = 'Marine'
-            weapon = 'Rifle'
-            maxHealth = 70
-            currentHealth = 70
-        if Class == 'Marine':
-            Range = 400
-            speed = 5
+        if marineRect.collidepoint(mx, my) and mb[0] == 1: #same logic as first
+            Class = 'Marine'    #
+            weapon = 'Rifle'    #
+            maxHealth = 70      #
+            currentHealth = 70  # variable set
+        if Class == 'Marine':   #
+            Range = 400         #
+            speed = 5           #
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, marineRect, 2)
             screen.blit(start, (800, 630))
@@ -857,11 +877,11 @@ def classSelect():
         if Class != 'Marine':
             screen.blit(screenBuff, (0, 0))
             screenBuff = screen.copy()
-        if tankRect.collidepoint(mx, my) and mb[0] == 1:
+        if tankRect.collidepoint(mx, my) and mb[0] == 1: #same logic as first
             Class = 'Tank'
             weapon = 'Pistol'
-            maxHealth = 100
-            currentHealth = 100
+            maxHealth = 90
+            currentHealth = 90
         if Class == 'Tank':
             Range = 200
             speed = 3
@@ -873,14 +893,14 @@ def classSelect():
         if Class != 'Tank':
             screen.blit(screenBuff, (0, 0))
             screenBuff = screen.copy()
-        if startRect.collidepoint(mx, my) and mb[0] == 1 and Class != '':
+        if startRect.collidepoint(mx, my) and mb[0] == 1 and Class != '': #next screen
             return 'menu'
         if backRect.collidepoint(mx, my) and mb[0] == 1:
             return 'load'
         display.flip()
 
 
-def endlessMode():
+def endlessMode(): #runs endless mode, enemies respawn continually faster and in more numerous until the user is killed
     fadeIn()
     global running
     global Class
@@ -1271,6 +1291,10 @@ def room_1():
         myClock.tick(60)
         blockMove([[Rect(50, 300, 250, 400)]])
         display.flip()
+
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -1342,6 +1366,9 @@ def room_2():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -1424,6 +1451,9 @@ def room_3():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -1504,6 +1534,9 @@ def room_4():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -1586,6 +1619,9 @@ def room_5():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -1672,6 +1708,9 @@ def room_6():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -1760,6 +1799,9 @@ def room_7():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -1845,6 +1887,9 @@ def room_8():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -1929,6 +1974,9 @@ def room_9():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -2024,6 +2072,9 @@ def room_10():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -2108,6 +2159,9 @@ def room_11():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if downRect.collidepoint(guyx, guyy):
@@ -2188,6 +2242,9 @@ def room_12():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if downRect.collidepoint(guyx, guyy):
@@ -2264,6 +2321,9 @@ def room_13():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if downRect.collidepoint(guyx, guyy):
@@ -2343,6 +2403,9 @@ def room_1B():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -2425,6 +2488,9 @@ def room_2B():
         myClock.tick(60)
         display.flip()
 
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         win = checkWinLevel(badGuys)
         if win:
             if upRect.collidepoint(guyx, guyy):
@@ -2457,7 +2523,7 @@ def room_3B():
     global lastRoom
     lastRoom = 'room_3B'
     shots = []#shots is reset when you enter the room so old shots from the last room dont carry in
-    Boss = [[512, 0, 0, 50]]
+    Boss = [[512, 0, 0, 5]]
     shotgunList = []
     room_3BRunning = True
     #all enemies are specific to each room so they are defined in each room
@@ -2510,6 +2576,12 @@ def room_3B():
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
+        win = checkWinLevel(badGuys)
+        if win:
+            return 'menu'
+        lose = checkLoseLevel(currentHealth)
+        if lose:
+            return 'menu'
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
         blockMove([[Rect(0, -50, 200, 900)],
@@ -2517,9 +2589,6 @@ def room_3B():
         myClock.tick(60)
         display.flip()
 
-        win = checkWinLevel(badGuys)
-        if win:
-            return 'menu'
     return 'title'
 
 
