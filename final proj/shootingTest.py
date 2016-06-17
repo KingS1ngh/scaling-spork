@@ -277,6 +277,7 @@ def moveShots(shots):
     global badshots
     global currentEnemy
     global killScore
+    global Range
     killlist = []   #bullets that need to be removed from the screen will be added here
     for shot in shots: #adding velicity x and y to every bullet in shots
         shot[X] += shot[VX]
