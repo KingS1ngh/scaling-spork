@@ -2,58 +2,58 @@ from pygame import *
 from math import *
 from random import *
 import glob
-
-screen = display.set_mode((1024, 700))
-myClock = time.Clock()
-running = True
-pos = ''
-guyx = 300
-guyy = 420
-lastx = 310
+#imports
+screen = display.set_mode((1024, 700))  #screen size
+myClock = time.Clock()  #used for fps and to make sure things dont move way too fast
+running = True  #program is running
+font.init() #initializing font
+arialFont2 = font.SysFont('Times New Roman', 20)    #setting font style and size
+guyx = 300  #character starting x
+guyy = 420  #character starting y
+lastx = 310 #last position character was(used for colliding with objects)
 lasty = 420
-SPACE = 32
-X = 0
-Y = 1
-VX = 2
-VY = 3
-C = 4
-angle = 0
-crateNum = 0
-bombPics = []
-yellow = 255, 255, 0
-red = 255, 0, 0
-mx, my = mouse.get_pos()
-mb = mouse.get_pressed()
-Class = 'Scout'
-weapon = 'Rifle'
-item = 'none'
-currentHealth = 40
-maxHealth = 40
-Heat = 20
-damage = 1
-guy = image.load('Pictures/'+weapon+' '+Class+'.png')
-shots = []
-shotgunList = []
-badshots = []
-gunAng = 0.0
-power = 5.0
-gunHeat = 0
-keys = key.get_pressed()
-BADSPEED = 2.5
-badGuys = []
+X = 0   #the x coordinate in our lists is usually the first/ 0 pos, so X for that
+Y = 1   #same thing as X but for Y coordinate
+VX = 2  #when shooting, spot 2 in the list is the velocity X, so VX to rep that
+VY = 3  #same as VX but for Y velocity
+angle = 0   #setting variable for the angle the guy(character being played) faces
+crateNum = 0    #setting crate number variable, used to check which weapon is recieved after upgrade
+bombPics = []   #list of sprite pics for bomb will be added here
+bossshots = []  #list of shots made by the boss will be added in this
+Boss = []   #boss x,y,angle, and health will be set in this list
+yellow = 255, 255, 0    #RGB values for yellow
+red = 255, 0, 0 #RGB values for red
+mx, my = mouse.get_pos()    #gets x and y position of mouse
+mb = mouse.get_pressed()    #used to check if left click
+Class = 'Scout' #setting variable for class, player will be allowed to pick during class select
+weapon = 'Rifle'    #weapon being used, will change based on class and powerups
+currentHealth = 40  #set for scout class, but will change according to class selected #is the current health of player
+maxHealth = 40  #player max health, so health cant extend more than max after getting healing pack
+Heat = 20   #default distance between every bullet fired by player, changes as upgrades are recieved
+damage = 1  #damage each bullet does, changes as upgrades are recived
+guy = image.load('Pictures/'+weapon+' '+Class+'.png')   #picture can change according to class and weapon being used
+shots = []  #list where all shots made by player will be added
+shotgunList = []    #shotgunList is a the same as shots but is a 3d list and is only for shotgun tank(for each shot in shots there are 3 shots)
+badshots = []   #shots made by badguys(alien 3) will be added to this list
+power = 5.0     #speed at which bullets travel
+gunHeat = 0     #cooldown for when bullets are shot, creating space between each shot
+keys = key.get_pressed()    #checks which key is pressed
+BADSPEED = 2.5  #speed for da badguys
+badGuys = []    #all of the badguys will be added in these lists, but at the beginning of each room function cuz enemies are specific to each room
 badGuys2 = []
 badGuys3 = []
-Wcrates = [[200, 300], [500, 70], [400, 400]]
-bombs = []
-right = (924, 325)
+Wcrates = []    #powerups are specific to rooms, so they will be added to this list in the rooms they are supposed to be in
+bombs = []      #coordinates and frame number for where the bombs will blow up will be added here
+right = (924, 325)  #directions are for ease of blitting of arrows
 up = (487, 0)
 left = (0, 325)
 down = (487, 600)
-rightRect = Rect(934, 330, 80, 30)
+rightRect = Rect(934, 330, 80, 30)  #rects for each direction
 upRect = Rect(492, 5, 30, 80)
 leftRect = Rect(5, 335, 80, 30)
 downRect = Rect(497, 605, 30, 80)
-holeRect = Rect(487, 325, 50, 50)
+holeRect = Rect(487, 325, 50, 50)    #rect for hole that leads to the boss rooms
+#----------Pictures being Loaded------------#
 
 titleScreen = image.load('Pictures/Title Screen.png').convert()
 titleBack = transform.scale(titleScreen, (1035, 800))
@@ -129,6 +129,7 @@ badguy2 = transform.scale(badguy2,(70,60))
 badguy3 = image.load('Pictures/Alien 3.png').convert_alpha()
 badguy3 = transform.scale(badguy3, (80,80))
 boss = image.load('Pictures/Boss Alien.png').convert_alpha()
+boss = transform.scale(boss,(80,80))
 arrow = image.load('Pictures/arrow.png').convert_alpha()
 rightArrow = transform.scale(arrow, (100,50))
 upArrow = transform.rotate(rightArrow, (90))
@@ -173,17 +174,20 @@ junk4 = image.load('Pictures/Junk 4.png').convert_alpha()
 junk5 = image.load('Pictures/Junk 5.png').convert_alpha()
 junk5 = transform.rotate(junk5, (90))
 junk6 = image.load('Pictures/Junk 6.png').convert_alpha()
+speed = 5   #speed for player movement (changes based on class
 
+mixer.init()    #initialized the music system
+mixer.music.load("Music/Ambient Space Music.mp3")   #background music file loaded
 
-for i in range(1, 17):
+for i in range(1, 17):  #adding sprites to pics list
     bombPics+=[(image.load("explosion/explosion"+str(i)+".png"))]
 
 
-def distance(x1, y1, x2, y2):
+def distance(x1, y1, x2, y2):   #uses trig to get distance from one point to another
     return ((x1-x2)**2+(y1-y2)**2)**0.5
 
 
-def moveGuy(x, y):
+def moveGuy(x, y): #moves player based on key pressed and speed
     global guyx
     global guyy
     global lastx
@@ -191,59 +195,64 @@ def moveGuy(x, y):
     keys = key.get_pressed()
     if keys[ord("a")]:
         lastx = guyx
-        guyx -= 5
+        guyx -= speed
     if keys[ord("d")]:
         lastx = guyx
-        guyx += 5
+        guyx += speed
     if keys[ord("w")]:
         lasty = guyy
-        guyy -= 5
+        guyy -= speed
     if keys[ord("s")]:
         lasty = guyy
-        guyy += 5
-    if guyx < 0: guyx = 0
+        guyy += speed
+    if guyx < 0: guyx = 0   #preventing player from walking off the screen
     if guyx > 1024 - 35: guyx = 1024 - 35
     if guyy < 0: guyy = 0
     if guyy > 700 - 35: guyy = 700 - 35
 
 
-def turn():
+def turn(): #turns player image based on where mx my are so player points at mouse
     global angle
     mx, my = mouse.get_pos()
     angle = degrees(atan2(mx-guyx, my-guyy))-180
 
 
-def guyRect(x, y):
+def guyRect(x, y):  #rect around the player, used for checking collides in things such as bullets and junk
     grect = Rect(x, y, 40, 40)
     return grect
 
 
-def vectToXY(mag, ang):
-    rang = radians(ang)
+def bossRect(b):    #rect for boss, used to check if bullets hit and if player hit
+    bossRect=Rect(b[0]+20,b[1]+20, 80, 80)
+    return bossRect
+
+
+def vectToXY(mag, ang):  #takes magnitude(length)and angle of a vector and splits into x and y components
+    rang = radians(ang)  #using basic trig
     x = cos(rang)*mag
     y = sin(rang)*mag
     return x, y
 
 
-def addShot(ang, power):
-    shot = [0, 0, 0, 0]
-    shot[X], shot[Y] = vectToXY(30, ang)
-    shot[X] += guyx
-    shot[Y] += guyy
-    shot[VX], shot[VY] = vectToXY(power, ang)
+def addShot(ang, power):    #function to add x, y and velocity values to each shot taken, which will be added
+    shot = [0, 0, 0, 0]     #to shots list
+    shot[X], shot[Y] = vectToXY(30, ang) #gets distance needed to be travelled by bullet x and y positions
+    shot[X] += guyx #makes shot start from guy
+    shot[Y] += guyy# ^
+    shot[VX], shot[VY] = vectToXY(power, ang) #gets velocity x and y needed
     return shot
 
 
-def addBadShot(bguy, ang, power):
-    badshot = [0, 0, 0, 0]
+def addBadShot(bguy, ang, power):   #adds each shot taken by the badguys into a list which will be added to another
+    badshot = [0, 0, 0, 0]          #list
     badshot[X], badshot[Y] = vectToXY(30, ang)
     badshot[X] += bguy[X]+40
     badshot[Y] += bguy[Y]+40
     badshot[VX], badshot[VY] = vectToXY(power, ang)
     return badshot
 
-def shotgun(ang, ang1 ,ang2, power):
-    shot=[[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+def shotgun(ang, ang1 ,ang2, power):    #same idea as addShot, but shot has 3 shots in it and is a 3d list instead of 2d
+    shot=[[0,0,0,0],[0,0,0,0],[0,0,0,0]]    #because it shoots 3 bullets at a time
     shot[0][X], shot[0][Y] = vectToXY(30,ang)
     shot[1][X], shot[1][Y] = vectToXY(30,ang1)
     shot[2][X], shot[2][Y] = vectToXY(30,ang2)
@@ -257,25 +266,28 @@ def shotgun(ang, ang1 ,ang2, power):
 
 
 def moveShots(shots):
+    global Boss
     global badshots
-    killlist = []
-    for shot in shots:
+    killlist = []   #bullets that need to be removed from the screen will be added here
+    for shot in shots: #adding velicity x and y to every bullet in shots
         shot[X] += shot[VX]
         shot[Y] += shot[VY]
-        if shot[X] > guyx+400 or guyx-400 > shot[X] or guyy-400 > shot[Y] or shot[Y] > guyy+400:
+        if shot[X] > guyx+Range or guyx-Range > shot[X] or guyy-Range > shot[Y] or shot[Y] > guyy+Range:
+            #add bullet to killlist if it reaches maximum range(each class has diff range)
             killlist.append(shot)
         for bguy in badGuys[:]:
             eRect=enemyRect(bguy)
             if eRect.collidepoint(shot[X], shot[Y]) and shot not in killlist:
-                bguy[3]-=damage
-                killlist.append(shot)
-                if bguy[3]<=0:
+                #if bullet hits enemy and it isnt already in killlist
+                bguy[3]-=damage #subtract damage from enemy 1 health
+                killlist.append(shot) #add the shot to be deleted from screen
+                if bguy[3]<=0:#if health is 0 or less the badguy dies
                     badGuys.remove(bguy)
-        for bguy in badGuys2:
+        for bguy in badGuys2:   #mostly same as badGuys but is 1 hit KO
             eRect = enemyRect(bguy)
             if eRect.collidepoint(shot[X], shot[Y]):
                 badGuys2.remove(bguy)
-        for bguy in badGuys3[:]:
+        for bguy in badGuys3[:]: #same as other two but has 3 health
             eRect=enemyRect(bguy)
             if eRect.collidepoint(shot[X], shot[Y]) and shot not in killlist:
                 bguy[3]-=damage
@@ -283,17 +295,26 @@ def moveShots(shots):
                 if bguy[3]<=0:
                     badGuys3.remove(bguy)
                     badshots = []
+        for b in Boss: #does same as other loops but with boss, and boss has 50 health
+            bossrect = bossRect(b)
+            if bossrect.collidepoint(shot[X],shot[Y]) and shot not in killlist:
+                b[3]-=damage
+                killlist.append(shot)
+                print(b[3])
+                if b[3]<=0:
+                    Boss.remove(b)
     for s in killlist:
         shots.remove(s)
 
 
-def moveShotgun(shotgunList):
+def moveShotgun(shotgunList):   #does the exact same thing as moveShots but specialized for the shotgun
+    global badshots
     killlist = []
     for s in shotgunList:
         for shot in s:
             shot[X] += shot[VX]
             shot[Y] += shot[VY]
-            if shot[X] > guyx+400 or guyx-400 > shot[X] or guyy-400 > shot[Y] or shot[Y] > guyy+400 and shot not in killlist:
+            if shot[X] > guyx+200 or guyx-200 > shot[X] or guyy-200 > shot[Y] or shot[Y] > guyy+200 and shot not in killlist:
                 killlist.append(shot)
             for bguy in badGuys[:]:
                 eRect=enemyRect(bguy)
@@ -314,6 +335,15 @@ def moveShotgun(shotgunList):
                     killlist.append(shot)
                     if bguy[3]<=0:
                         badGuys3.remove(bguy)
+                        badshots = []
+            for boss in Boss:
+                bossrect = bossRect(boss)
+                if bossrect.collidepoint(shot[X],shot[Y]) and shot not in killlist:
+                    boss[3]-=damage
+                    killlist.append(shot)
+                    print(boss[3])
+                    if boss[3]<=0:
+                        Boss.remove(boss)
     for s in killlist:
         for k in shotgunList:
             for j in k:
@@ -321,76 +351,78 @@ def moveShotgun(shotgunList):
                     k.remove(j)
 
 
-def moveBadShots(bguy, badshots):
+def moveBadShots(bguy, badshots, domage):   #same as moveShots but uses the shots shot by badguys and inflicts damage to the player
     global currentHealth
     killlist = []
     for shot in badshots:
         shot[X] += shot[VX]
         shot[Y] += shot[VY]
-        if shot[X] > bguy[X]+400:
+        if shot[X] > bguy[X]+4000:
             killlist.append(shot)
         gRect = guyRect(guyx, guyy)
         if gRect.collidepoint(shot[X], shot[Y]):
-            currentHealth-=10/len(badshots)
+            currentHealth-=domage
             killlist.append(shot)
     for s in killlist:
         badshots.remove(s)
 
 
-def badMove(bguy, x, y, BADSPEED):
+def badMove(bguy, x, y, BADSPEED):  #gets the amount the badguy needs to move in order to follow the player
+    #and gets the angle needed to trun and face the guy
     import math
     dist = max(1, distance(bguy[0], bguy[1], x, y))
-    moveX = (x-bguy[0])*BADSPEED/dist
-    moveY = (y-bguy[1])*BADSPEED/dist
-    ang = math.atan2(-moveY, moveX)
+    moveX = (x-bguy[0])*BADSPEED/dist #the move from bguy x to guyx
+    moveY = (y-bguy[1])*BADSPEED/dist #the move from bguy y to guyy
+    ang = math.atan2(-moveY, moveX) #the angle at which the bguy turns to face the player
     return moveX, moveY, math.degrees(ang)
 
 
-def moveBadGuys1(bguy, guyx, guyy):
+def moveBadGuys1(bguy, guyx, guyy): #adds the values calculated in badMove to the bguy1s
     moveX, moveY, moveAng = badMove(bguy, guyx, guyy, 2.5)
     bguy[0] += moveX
     bguy[1] += moveY
     bguy[2] = moveAng-90
 
 
-def moveBadGuys2(bguy, guyx, guyy):
+def moveBadGuys2(bguy, guyx, guyy): #adds the values calculated in badMove to the bguy2s, move faster than bguy1
     moveX, moveY, moveAng = badMove(bguy, guyx, guyy, 4)
     bguy[0] += moveX
     bguy[1] += moveY
     bguy[2] = moveAng-90
 
 
-def moveBadGuys3(bguy, guyx, guyy):
+def moveBadGuys3(bguy, guyx, guyy): #shooter enemies, so they dont move only rotate, so only adds teh angle to the bguy list
     moveX, moveY, moveAng = badMove(bguy, guyx, guyy, 4)
     bguy[2] = moveAng-90
     return moveAng
 
 
-def boomBombs(bombs):
+def boomBombs(bombs): #goes through the coordinates in bombs, and blits the booom sprites at those coordinates,
+    #and goes through each picture in teh sprites list
     rem=[]
     for bomb in bombs:
         bomb[3]+=1
         if bomb[3]==16:
             rem.append(bomb)
-    for bomb in rem:
+    for bomb in rem: #removes bombs that have finished explofing
         bombs.remove(bomb)
 
 
-def enemyRect(bguy):
+def enemyRect(bguy): #makes a rect around bguy
     eRect = Rect(bguy[0]+35, bguy[1]+35, 40, 40)
     return eRect
 
-def checkHit(rect):
-    global bombs
+def checkHit(rect):     #checks if an enemey hits player, so enemies coordinates can be added
+    global bombs        #to the bombs list
     global currentHealth
     global badGuys
     global badGuys2
-    for bguy in badGuys:
+    for bguy in badGuys: #if a bguy from badGuys hits player, the coordinates are added to bomb list
         if rect.collidepoint(bguy[0]+35, bguy[1]+35):
-            currentHealth -= 10
-            badGuys.remove(bguy)
+            currentHealth -= 10 #subtracts 10 health if bomb goes boomb
+            badGuys.remove(bguy) #enemies are suicide bombers, so they die too
             bombs.append([bguy[0], bguy[1],0,0])
-    for bguy in badGuys2:
+    for bguy in badGuys2: #same as previous loop but with badGuys2
         if rect.collidepoint(bguy[0]+35, bguy[1]+35):
             currentHealth -= 10
             badGuys2.remove(bguy)
@@ -398,19 +430,23 @@ def checkHit(rect):
             return True
     return False
 
+def instaDeath(guyx,guyy,rect): #if guy collides with the boss, inst death (welcome to dark souls)
+    global currentHealth
+    if rect.collidepoint(guyx,guyy):
+        currentHealth = 0
 
-def checkWinLevel(badGuys):
-    if len(badGuys) == 0 and len(badGuys2) == 0 and len(badGuys3) == 0:
+def checkWinLevel(badGuys): #if all enemies in the room are dead, level is won
+    if len(badGuys) == 0 and len(badGuys2) == 0 and len(badGuys3) == 0 and len(Boss) == 0:
         return True
     return False
 
 
-def checkLoseLevel(health):
+def checkLoseLevel(health): #if you have 0 health, you die and lose the game
     if health <= 0:
         return True
 
 
-def checkUpgrade(Wcrates, Mcrates, guyx, guyy):
+def checkUpgrade(Wcrates, Mcrates, guyx, guyy): #checks if any crate is collided with, and gives powerup accordingly
     global guy
     global crateNum
     global weapon
@@ -419,19 +455,19 @@ def checkUpgrade(Wcrates, Mcrates, guyx, guyy):
     global Heat
     global damage
 
-    for crate in Wcrates:
+    for crate in Wcrates:   #blits crates to designated coordinates and makes a rect to check if you collide with it
         crateRect = Rect(crate[0], crate[1], 40, 40)
         if crateRect.collidepoint(guyx + 15, guyy + 15):
             crateNum = crate[2]
             Wcrates.remove(crate)
 
-    for med in Mcrates:
+    for med in Mcrates:     #checks if you collide with the medrect, and if you do add 20 health, with a cap of maxhealth
         medRect = Rect(med[0], med[1], 40, 40)
         if medRect.collidepoint(guyx + 15, guyy + 15):
             currentHealth += 20
             Mcrates.remove(med)
             if currentHealth > maxHealth: currentHealth = maxHealth
-
+#-------Upgrades respective to class and cratenum--------#
     if crateNum == 1 and Class == 'Scout':
         Heat = 30
         damage = 3
@@ -460,57 +496,62 @@ def checkUpgrade(Wcrates, Mcrates, guyx, guyy):
         Heat = 10
         damage = 2
         weapon = 'Machine'
-    if crateNum == 3 and Class == 'Tank':
-        Heat = 10
-        damage = 1
-        weapon = 'Melee'
 
 
-def goodHealthMeter(currentHealth):
+
+def goodHealthMeter(currentHealth): #makes a rect for the current health so the player knows how much health they have left
     healthRect = Rect(10, 10, 10+(currentHealth*2), 20)
     return healthRect
 
 
-def drawScene(badGuys, badGuys2, arrows, back, builds):
-    screen.blit(back, (0, 0))
-    guy = image.load('Pictures/' + weapon + ' ' + Class + '.png')
-    pic = transform.scale(guy, (50, 50))
-    turn()
-    pic = transform.rotate(pic, angle)
-    screen.blit(pic, (guyx - 17, guyy - 17))
-    shoot1 = image.load("Pictures/shot.png")
-    shoot1 = transform.scale(shoot1, (10, 10))
-    shoot2 = image.load("Pictures/redbullet.png").convert()
-    shoot2 = transform.scale(shoot2, (7, 7))
+def drawScene(badGuys, badGuys2, arrows, back, builds): #actually blits and draws EVERYTHING
+    screen.blit(back, (0, 0))   #background
+    guy = image.load('Pictures/' + weapon + ' ' + Class + '.png') #pic for guy based on class and weapon
+    pic = transform.scale(guy, (50, 50)) #resizes guy so hes not a giant
+    turn() #calling function to get teh angle needed for player to face cursor
+    pic = transform.rotate(pic, angle)  #rotates guy to the angle gotten from turn()
+    screen.blit(pic, (guyx - 17, guyy - 17)) #actually blits the guy after make necessary alterations
+    shoot2 = image.load("Pictures/redbullet.png").convert()#the image of the bullet to be shot
+    shoot2 = transform.scale(shoot2, (7, 7)) #resizes the bullet so it looks like bullet instead of a giant ball
 
-    for crate in Wcrates:
+    for crate in Wcrates: #blits the weapon crates in Wcrates list
         weaponcrate = transform.scale(crat, (40,60))
         screen.blit(weaponcrate, (crate[0], crate[1]))
         checkUpgrade(Wcrates, Mcrates, guyx, guyy)
 
-    for med in Mcrates:
+    for med in Mcrates: #blits all of the med crates in Mcrates list
         medcrate = transform.scale(crat3, (40, 60))
         screen.blit(medcrate, (med[0], med[1]))
         checkUpgrade(Wcrates, Mcrates, guyx, guyy)
-    if weapon == 'Shotgun':
+    if weapon == 'Shotgun': #if the weapon is shotgun, uses spreadshot and draws 3 bullets for every shot
         for s in shotgunList[:]:
             for shot in s:
                 screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
-    for shot in shots[:]:
+    for shot in shots[:]:   #draws all of the bullets in shots
         screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
 
-    for shot in badshots[:]:
+    for shot in badshots[:]: #draws all of the shots shot by badGuys3
+        screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
+    for shot in bossshots[:]: #draws the bossshots
         screen.blit(shoot2, (int(shot[X]), int(shot[Y])))
 
-    for bguy in badGuys:
+    for bguy in badGuys: #draws every bguy in teh badGuys list
         moveBadGuys1(bguy, guyx, guyy)
-        alien1 = transform.rotate(badguy1, bguy[2])
+        alien1 = transform.rotate(badguy1, bguy[2]) #rotates the image to face the player
         screen.blit(alien1, bguy[:2])
 
-    for bomb in bombs:
+    for bomb in bombs: #blits the sprites for the bombs, using the frame # and coordinates
         screen.blit(bombPics[bomb[3]], (bomb[X],bomb[Y]))
 
-    for bguy in badGuys2:
+    if page=='room_3B': #boss is only in room 3B, so this only applies to room 3B
+        for b in Boss:
+            moveBadGuys1(b,guyx,guyy) #draws the boss and rotates according to angle
+            bosss=transform.rotate(boss,b[2])
+            screen.blit(bosss, b[:2])
+            bossrect= bossRect(b)
+            draw.rect(screen,(255,0,0),bossrect,1) #rect to avoid, cuz if you hit it insta death is activated
+
+    for bguy in badGuys2: #draws each of the bguys in badGuys2
         moveBadGuys2(bguy, guyx, guyy)
         alien2= transform.rotate(badguy2, bguy[2])
         screen.blit(alien2, bguy[:2])
@@ -520,16 +561,23 @@ def drawScene(badGuys, badGuys2, arrows, back, builds):
         alien3 = transform.rotate(badguy3, bguy[2])
         screen.blit(alien3, bguy[:2])
 
-    for b in builds:
+    for b in builds: #draws the buildings fo that level
         screen.blit(b[0], (b[1], b[2]))
 
-    grect = guyRect(guyx, guyy)
-    checkHit(grect)
+    grect = guyRect(guyx, guyy) #rect around the plater to check if anything hits him
+    checkHit(grect) #checks if hit by any enemies
     healthRect = goodHealthMeter(currentHealth)
-    draw.rect(screen, (0, 255, 0), healthRect)
+    draw.rect(screen, (0, 255, 0), healthRect)  #draws the health bar
+    healthArea = Rect(10,30,100,100)    #the place to blit "health" and current health/max health
+    weaponArea = Rect(900,10,200,50)    #the place to blit current weapon
+    weaponText = arialFont2.render("Weapon:"+weapon,True,(255,0,0)) #what will be written
+    healthPic = arialFont2.render('Health:%s/%s'%(str(currentHealth),str(maxHealth)),True,(0,255,0))   #what will be written fro health
+    screen.blit(healthPic,(healthArea.x+3,healthArea.y+2)) #blitting health words to screen
+    screen.blit(weaponText,(weaponArea.x+3,weaponArea.y+2)) #blitting the word for current weapon type
 
-    win = checkWinLevel(badGuys)
+    win = checkWinLevel(badGuys) #only allowed to leave rooom if all enemies are dead
     if win:
+        #arrows are where the player walks to in order to move to next room
         for arrow in arrows:
             if arrow == right:
                 screen.blit(rightArrow, right)
@@ -542,7 +590,7 @@ def drawScene(badGuys, badGuys2, arrows, back, builds):
             if arrow == hole:
                 screen.blit(hole, (487, 325))
 
-    lose = checkLoseLevel(currentHealth)
+    lose = checkLoseLevel(currentHealth) #if health is 0 you lose the level
     if lose:
         screen.fill((0, 0, 0))
     display.flip()
@@ -551,8 +599,8 @@ def drawScene(badGuys, badGuys2, arrows, back, builds):
 def fadeIn():
     image=screen.copy().convert()
     for i in range(255):
-        screen.fill((0, 0, 0))
-        image.set_alpha(255-i)
+        screen.fill((0, 0, 0)) #starts with black screen
+        image.set_alpha(255-i)#adds back the alpha slowly through the loop and gives fade effect
         screen.blit(image, (0, 0))
         display.flip()
 
@@ -711,6 +759,8 @@ def classSelect():
     global weapon
     global maxHealth
     global currentHealth
+    global speed
+    global Range
     backRect = Rect(0, 630, 150, 75)
     scoutRect = Rect(173, 390, 75, 75)
     marineRect = Rect(470, 390, 75, 75)
@@ -741,6 +791,8 @@ def classSelect():
             maxHealth = 40
             currentHealth = 40
         if Class == 'Scout':
+            Range = 800
+            speed = 7
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, scoutRect, 2)
             screen.blit(start, (410, 555))
@@ -755,6 +807,8 @@ def classSelect():
             maxHealth = 70
             currentHealth = 70
         if Class == 'Marine':
+            Range = 400
+            speed = 5
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, marineRect, 2)
             screen.blit(start, (410, 555))
@@ -769,6 +823,8 @@ def classSelect():
             maxHealth = 100
             currentHealth = 100
         if Class == 'Tank':
+            Range = 200
+            speed = 3
             screen.blit(screenBuff, (0, 0))
             draw.rect(screen, red, tankRect, 2)
             screen.blit(start, (410, 555))
@@ -913,22 +969,22 @@ def pause():
             return 'menu'
 
 
-def blockMove(image):
+def blockMove(image): #stops guy from walking on space ships and junk pictures so they are like obtacles
     global lastx
     global lasty
     global guyx
     global guyy
-    keys = key.get_pressed()
     grect = guyRect(guyx, guyy)
     for i in image:
         imageRect = i[0]
-        if grect.colliderect(imageRect):
-            guyx = lastx
+        if grect.colliderect(imageRect): #if guy collides with an image
+            guyx = lastx #the current positions turn into the old positions, stopping the player from moving over the picture
             guyy = lasty
 
-
+######============ROOMS==============#####
+#all rooms have the same code, just different lists
 def room_1():
-    fadeIn()
+    fadeIn() #when you enter the room does fade effect
     global running
     global Class
     global gunHeat
@@ -941,14 +997,14 @@ def room_1():
     global guyy
     global shots
     global shotgunList
-    shots = []
+    shots = [] #shots is reset when you enter the room so old shots from the last room dont carry in
     room_1Running = True
+    #all enemies are specific to each room so they are defined in each room
     badGuys=[[100,100,0,2]]
-    badGuys3=[[400,300,0,3],[100,600,0,3]]
-    Wcrates=[]
-    arrows = [up]
-    builds = [[ship9, 50, 300]]
-    Mcrates = []
+    Wcrates=[] #if there are any crates in the room they would be listed in the Wcrates list in each room function
+    arrows = [up] #draws an arrow in the specified location(s) and lead to other rooms
+    builds = [[ship9, 50, 300]] #list of buildings that need to be drawn. specific to each room
+    Mcrates = [] #same a Wcrates
 
     while room_1Running:
         for evnt in event.get():
@@ -964,24 +1020,25 @@ def room_1():
         mb = mouse.get_pressed()
         if mb[0] == 1 and gunHeat <= 0:
             gunHeat = Heat
-            if weapon == 'Shotgun':
+            if weapon == 'Shotgun': #since shotgun is the only one with spreadshot, if the weapon isnt shotgun
+                #the bullets will have to be used with addShot
                 shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
             else:
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1: #has a 1/100 chance every time it loops around to shoot, making it completely random shooting
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
-        gunHeat -= 1
+        gunHeat -= 1 #since gunheat has to be at least 0 for shot to shoot, subtract 1 everytime it loops around so player can shoot again
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
         myClock.tick(60)
-        blockMove([[Rect(50, 300, 250, 400), 50, 300, 300, 700]])
+        blockMove([[Rect(50, 300, 250, 400)]])
         display.flip()
         win = checkWinLevel(badGuys)
         if win:
@@ -1009,7 +1066,7 @@ def room_2():
     shots = []
     shotgunList = []
     room_2Running = True
-    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2],[300,20,0,2]]
     Wcrates=[]
     arrows = [up,right,left,down]
     builds = [[build2, 100, 100]]
@@ -1035,9 +1092,9 @@ def room_2():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1045,7 +1102,7 @@ def room_2():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(210, 80, 400, 650), 210, 80, 400, 650]])
+        blockMove([[Rect(150, 80, 110, 580)]])
         myClock.tick(60)
         display.flip()
 
@@ -1112,9 +1169,9 @@ def room_3():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1122,7 +1179,7 @@ def room_3():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(650, 50, 875, 350), 650, 50, 875, 350]])
+        blockMove([[Rect(675, 60, 190, 280)]])
         myClock.tick(60)
         display.flip()
 
@@ -1155,7 +1212,7 @@ def room_4():
     shots = []
     shotgunList = []
     room_4Running = True
-    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys=[[140,600,0,2],[10,250,0,2],[200,400,0,2],[900,320,0,2],[820,350,0,2]]
     Wcrates=[[100,600,1]]
     arrows = [up, left]
     builds = [[junk1, 175, 145], [junk2, 550, 480], [junk3, 750, 200]]
@@ -1185,9 +1242,9 @@ def room_4():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1195,9 +1252,9 @@ def room_4():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(175, 145, 250, 295), 175, 145, 250, 295],
-                   [Rect(530, 440, 620, 630), 530, 440, 620, 630],
-                   [Rect(720, 180, 900, 285), 720, 180, 900, 285]])
+        blockMove([[Rect(185, 155, 60, 140)],
+                   [Rect(555, 480, 70, 150)],
+                   [Rect(760, 210, 130, 75)]])
         myClock.tick(60)
         display.flip()
 
@@ -1221,6 +1278,7 @@ def room_5():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
     global Wcrates
     global Mcrates
     global guyx
@@ -1230,7 +1288,8 @@ def room_5():
     shots = []
     shotgunList = []
     room_5Running = True
-    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys=[[100,700,0,2],[10,500,0,2],[500,450,0,2]]
+    badGuys2 = [[200,200,0],[300,100,0]]
     Wcrates=[]
     arrows = [up, right, down]
     builds = [[junk4, 150, 100], [junk5, 275, 500], [junk6, 600, 150]]
@@ -1260,9 +1319,9 @@ def room_5():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1270,9 +1329,9 @@ def room_5():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(135, 80, 250, 365), 135, 80, 250, 365],
-                   [Rect(250, 480, 470, 610), 250, 480, 470, 610],
-                   [Rect(580, 130, 680, 325), 580, 130, 680, 325]])
+        blockMove([[Rect(160, 100, 100, 250)],
+                   [Rect(270, 510, 200, 100)],
+                   [Rect(610, 160, 80, 160)]])
         myClock.tick(60)
         display.flip()
 
@@ -1300,6 +1359,7 @@ def room_6():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
     global Wcrates
     global Mcrates
     global guyx
@@ -1310,6 +1370,7 @@ def room_6():
     shotgunList = []
     room_6Running = True
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys2 = [[300,700,0],[900,100,0]]
     Wcrates=[]
     arrows = [up,right,left,down]
     builds = [[ship7, 200, 150]]
@@ -1339,9 +1400,9 @@ def room_6():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1349,9 +1410,9 @@ def room_6():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(285, 130, 420, 370), 285, 130, 420, 370],
-                   [Rect(290, 350, 490, 600), 290, 350, 490, 600],
-                   [Rect(190, 280, 300, 600), 190, 280, 300, 600]])
+        blockMove([[Rect(305, 170, 120, 190)],
+                   [Rect(310, 380, 170, 200)],
+                   [Rect(210, 300, 80, 250)]])
         myClock.tick(60)
         display.flip()
 
@@ -1424,9 +1485,9 @@ def room_7():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1434,7 +1495,7 @@ def room_7():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(250, 175, 450, 675), 250, 175, 450, 675]])
+        blockMove([[Rect(320, 195, 180, 490)]])
         myClock.tick(60)
         display.flip()
 
@@ -1462,6 +1523,7 @@ def room_8():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
     global Wcrates
     global Mcrates
     global guyx
@@ -1471,7 +1533,8 @@ def room_8():
     shots = []
     shotgunList = []
     room_8Running = True
-    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys=[[100,300,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys2 = [[123,342,0],[234,523,0]]
     Wcrates=[[100,600,2]]
     arrows = [up,right,down]
     builds = [[junk3, 200, 225], [ship5, 650, 50]]
@@ -1501,9 +1564,9 @@ def room_8():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1511,8 +1574,8 @@ def room_8():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(180, 210, 360, 310), 180, 210, 360, 310],
-                   [Rect(650, 100, 845, 625), 650, 100, 845, 625]])
+        blockMove([[Rect(200, 240, 160, 80)],
+                   [Rect(680, 100, 165, 625)]])
         myClock.tick(60)
         display.flip()
 
@@ -1540,6 +1603,7 @@ def room_9():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
     global Wcrates
     global Mcrates
     global guyx
@@ -1549,7 +1613,8 @@ def room_9():
     shots = []
     shotgunList = []
     room_9Running = True
-    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys=[[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys2 = [[234,453,0],[455,243,0],[543,244,0]]
     Wcrates=[]
     arrows = [up,right,left,down]
     builds = [[build3, 250, 75]]
@@ -1579,9 +1644,9 @@ def room_9():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1589,7 +1654,7 @@ def room_9():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(280, 115, 730, 570), 280, 115, 730, 570]])
+        blockMove([[Rect(280, 115, 440, 420)]])
         myClock.tick(60)
         display.flip()
 
@@ -1621,6 +1686,7 @@ def room_10():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
     global Wcrates
     global Mcrates
     global guyx
@@ -1631,6 +1697,9 @@ def room_10():
     shotgunList = []
     room_10Running = True
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys2 = [[randint(0,1024),randint(0,700),0],
+                [randint(0,1024),randint(0,700),0],
+                [randint(0,1024),randint(0,700),0]]
     Wcrates=[]
     arrows = [up,left,down]
     builds = [[build5, 125, 150], [build5, 175, 400], [build5, 420, 250], [build5, 600, 180], [build5, 620, 500]]
@@ -1660,9 +1729,9 @@ def room_10():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1671,11 +1740,11 @@ def room_10():
         boomBombs(bombs)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(110, 140, 250, 240), 110, 140, 250, 240],
-                   [Rect(160, 390, 300, 490), 160, 390, 300, 490],
-                   [Rect(405, 240, 545, 340), 405, 240, 545, 340],
-                   [Rect(585, 170, 700, 270), 585, 170, 700, 270],
-                   [Rect(605, 490, 745, 590), 605, 490, 745, 590]])
+        blockMove([[Rect(140, 170, 100, 80)],
+                   [Rect(190, 420, 100, 80)],
+                   [Rect(435, 270, 100, 80)],
+                   [Rect(615, 200, 100, 80)],
+                   [Rect(635, 520, 100, 80)]])
         myClock.tick(60)
         display.flip()
 
@@ -1703,6 +1772,7 @@ def room_11():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
     global Wcrates
     global Mcrates
     global guyx
@@ -1712,7 +1782,7 @@ def room_11():
     shots = []
     shotgunList = []
     room_11Running = True
-    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys2=[[100,600,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [down, hole]
     builds = [[build4, 200, 150], [build4, 650, 200]]
@@ -1742,9 +1812,9 @@ def room_11():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1752,8 +1822,8 @@ def room_11():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(190, 135, 340, 440), 190, 135, 340, 440],
-                   [Rect(640, 185, 780, 490), 640, 185, 780, 490]])
+        blockMove([[Rect(220, 165, 100, 270)],
+                   [Rect(670, 215, 100, 270)]])
         myClock.tick(60)
         display.flip()
 
@@ -1777,6 +1847,7 @@ def room_12():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
     global Wcrates
     global Mcrates
     global guyx
@@ -1786,7 +1857,7 @@ def room_12():
     shots = []
     shotgunList = []
     room_12Running = True
-    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys2=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[]
     arrows = [down]
     builds = [[build5, 200, 300], [build1, 825, -75]]
@@ -1816,9 +1887,9 @@ def room_12():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1826,8 +1897,8 @@ def room_12():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(185, 290, 325, 390), 185, 290, 325, 390],
-                   [Rect(800, -50, 1024, 900), 800, -50, 1024, 900]])
+        blockMove([[Rect(215, 320, 100, 80)],
+                   [Rect(830, -50, 1024, 900)]])
         myClock.tick(60)
         display.flip()
 
@@ -1847,6 +1918,7 @@ def room_13():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
     global Wcrates
     global Mcrates
     global guyx
@@ -1856,7 +1928,7 @@ def room_13():
     shots = []
     shotgunList = []
     room_13Running = True
-    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys2=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     Wcrates=[[900,100,3]]
     arrows = [down]
     builds = [[build5, 400, 275], [ship6, -250, -50]]
@@ -1886,9 +1958,9 @@ def room_13():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1896,8 +1968,8 @@ def room_13():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back1, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(385, 265, 525, 365), 385, 265, 525, 365],
-                   [Rect(0, -50, 200, 900), 0, -50, 200, 900]])
+        blockMove([[Rect(415, 295, 100, 80)],
+                   [Rect(0, -50, 200, 900)]])
         myClock.tick(60)
         display.flip()
 
@@ -1913,6 +1985,7 @@ def room_13():
 def room_1B():
     fadeIn()
     global badGuys2
+    global badGuys3
     global running
     global Class
     global gunHeat
@@ -1929,6 +2002,7 @@ def room_1B():
     room_1BRunning = True
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
     badGuys2=[[100,100,0],[500,400,0]]
+    badGuys3 = [[20,20,0,3],[900,20,0,3]]
     Wcrates=[]
     arrows = [up]
     builds = []
@@ -1958,9 +2032,9 @@ def room_1B():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -1968,8 +2042,8 @@ def room_1B():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(0, -50, 200, 900), 0, -50, 200, 900],
-                   [Rect(800, -50, 1024, 900), 800, -50, 1024, 900]])
+        blockMove([[Rect(0, -50, 200, 900)],
+                   [Rect(800, -50, 1024, 900)]])
         myClock.tick(60)
         display.flip()
 
@@ -1989,6 +2063,8 @@ def room_2B():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
+    global badGuys3
     global Wcrates
     global Mcrates
     global guyx
@@ -1999,6 +2075,11 @@ def room_2B():
     shotgunList = []
     room_2BRunning = True
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys2 = [[randint(0,1024),randint(0,700),0],
+                [randint(0,1024),randint(0,700),0],
+                [randint(0,1024),randint(0,700),0],
+                [randint(0,1024),randint(0,700),0]]
+    badGuys3 = [[20,20,0,3],[900,20,0,3]]
     Wcrates=[]
     arrows = [up]
     builds = []
@@ -2028,9 +2109,9 @@ def room_2B():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
+            moveBadShots(bguy,badshots,10)
 
         gunHeat -= 1
         boomBombs(bombs)
@@ -2038,8 +2119,8 @@ def room_2B():
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(0, -50, 200, 900), 0, -50, 200, 900],
-                   [Rect(800, -50, 1024, 900), 800, -50, 1024, 900]])
+        blockMove([[Rect(0, -50, 200, 900)],
+                   [Rect(800, -50, 1024, 900)]])
         myClock.tick(60)
         display.flip()
 
@@ -2063,16 +2144,24 @@ def room_3B():
     global gunHeat
     global weapon
     global badGuys
+    global badGuys2
+    global badGuys3
     global Wcrates
     global Mcrates
     global guyx
     global guyy
     global shots
     global shotgunList
+    global Boss
     shots = []
+    Boss = [[512, 0, 0, 50]]
     shotgunList = []
     room_3BRunning = True
     badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
+    badGuys2 = [[randint(0,1024),randint(0,700),0],
+                [randint(0,1024),randint(0,700),0],
+                [randint(0,1024),randint(0,700),0]]
+    badGuys3 = [[20,20,0,3],[900,20,0,3],[20,600,0,3],[900,600,0,3]]
     Wcrates=[]
     arrows = []
     builds = []
@@ -2102,18 +2191,23 @@ def room_3B():
                 shots.append(addShot(-angle - 90, power))
         for bguy in badGuys3:
             ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
+            if randint(0,100)==1:
                 badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
-
+            moveBadShots(bguy,badshots,10)
+        for b in Boss:
+            if randint(0,50)==1:
+                bossshots.append(addBadShot(b, -b[2]-90, 10))
+            moveBadShots(b ,bossshots,20)
+            bossrect = bossRect(b)
+            instaDeath(guyx,guyy,bossrect)
         gunHeat -= 1
         boomBombs(bombs)
         moveShots(shots)
         moveShotgun(shotgunList)
         drawScene(badGuys, badGuys2, arrows, back2, builds)
         moveGuy(guyx, guyy)
-        blockMove([[Rect(0, -50, 200, 900), 0, -50, 200, 900],
-                   [Rect(800, -50, 1024, 900), 800, -50, 1024, 900]])
+        blockMove([[Rect(0, -50, 200, 900)],
+                   [Rect(800, -50, 1024, 900)]])
         myClock.tick(60)
         display.flip()
 
@@ -2123,78 +2217,10 @@ def room_3B():
     return 'title'
 
 
-def room_4B():
-    fadeIn()
-    global running
-    global Class
-    global gunHeat
-    global weapon
-    global badGuys
-    global Wcrates
-    global Mcrates
-    global guyx
-    global guyy
-    global shots
-    global shotgunList
-    shots = []
-    shotgunList = []
-    room_4BRunning = True
-    badGuys=[[100,700,0,2],[10,500,0,2],[200,400,0,2],[500,450,0,2]]
-    Wcrates=[]
-    arrows = [left]
-    builds = []
-    Mcrates = []
-
-    while room_4BRunning:
-        for evnt in event.get():
-            if evnt.type == QUIT:
-                running = False
-                room_4BRunning = False
-            if evnt.type == KEYDOWN:
-                if evnt.key == K_p:
-                    a = pause()
-                    if a != None:
-                        return a
-
-        keys = key.get_pressed()
-        if keys[27]:
-            break
-
-        mb = mouse.get_pressed()
-        if mb[0] == 1 and gunHeat <= 0:
-            gunHeat = Heat
-            if weapon == 'Shotgun':
-                shotgunList.append(shotgun(-angle - 90, -angle - (90+randint(0,10)), -angle - (90-randint(0,10)), power))
-            else:
-                shots.append(addShot(-angle - 90, power))
-        for bguy in badGuys3:
-            ang = moveBadGuys3(bguy, guyx, guyy)
-            if randint(0,50)==1:
-                badshots.append(addBadShot(bguy,-ang,10))
-            moveBadShots(bguy,badshots)
-
-        gunHeat -= 1
-        boomBombs(bombs)
-        moveShots(shots)
-        moveShotgun(shotgunList)
-        drawScene(badGuys, badGuys2, arrows, back2, builds)
-        moveGuy(guyx, guyy)
-        blockMove([[Rect(0, -50, 200, 900), 0, -50, 200, 900],
-                   [Rect(800, -50, 1024, 900), 800, -50, 1024, 900]])
-        myClock.tick(60)
-        display.flip()
-
-        win = checkWinLevel(badGuys)
-        if win:
-            if leftRect.collidepoint(guyx, guyy):
-                guyx = 1000
-                guyy = 350
-                return 'room_2B'
-    return 'title'
-
-
-page = 'title'
+page = 'room_3B'
 while page != 'exit':
+    mixer.music.set_volume(.7)
+    mixer.music.play(-1)
     if page == 'title':
         page = title()
     if page == 'menu':
@@ -2243,8 +2269,6 @@ while page != 'exit':
         page = room_2B()
     if page == 'room_3B':
         page = room_3B()
-    if page == 'room_4B':
-        page = room_4B()
     if not running:
         page = 'exit'
 quit()
